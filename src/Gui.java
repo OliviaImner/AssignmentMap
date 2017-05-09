@@ -1,0 +1,496 @@
+
+import javax.swing.*;
+import javax.swing.border.LineBorder;
+import javax.swing.event.*;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import java.io.*;
+import java.util.*;
+import java.util.List;
+import java.awt.*;
+import java.awt.event.*;
+
+public class Gui extends JFrame {
+  private boolean changed = false;
+  private JFrame window = new JFrame();
+  private Background background;
+  private JScrollPane scrollBack = new JScrollPane();
+  private String[] option = { "Buss", "Tunnelbana", "Tåg" };
+  private JList<String> list = new JList<>(option);
+  private JScrollPane scroll = new JScrollPane(list);
+  private JTextField searchLabel = new JTextField("Search...");
+  private boolean control = false;
+  NewPlace place = new NewPlace();
+  WhatIsHere wis = new WhatIsHere();
+  
+  private JRadioButton nameButton = new JRadioButton("Named");
+  private JRadioButton DButton = new JRadioButton("Described");
+  ButtonGroup group = new ButtonGroup();
+  
+  Map<Position, Place> positionMap = new HashMap<>();
+  Collection<Place> markedList = new ArrayList<>();
+  Map<String, Collection<Place>> namedMap = new HashMap<>();
+  Map<String, Collection<Place>> catMap = new HashMap<>();
+  
+  public Gui() {
+    super("Assignment 2");
+    addWindowListener(new WindowLis());
+    setLayout(new BorderLayout());
+    add(new East(), BorderLayout.EAST);
+    add(new North(), BorderLayout.NORTH);
+    JMenuBar menuBar = new JMenuBar();
+    JMenu menu = new JMenu("Archive");
+    menuBar.add(menu);
+    JMenuItem newMap = new JMenuItem("New Map ");
+    JMenuItem load = new JMenuItem("Load Places");
+    JMenuItem save = new JMenuItem("Save ");
+    JMenuItem exit = new JMenuItem("Exit ");
+    menu.add(newMap);
+    newMap.addActionListener(new OpenLis());
+    menu.add(load);
+    load.addActionListener(new LoadPlaces());
+    menu.add(save);
+    save.addActionListener(new SavePlaces());
+    menu.add(exit);
+    exit.addActionListener(new ExitLis());
+    setJMenuBar(menuBar);
+    setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+    setSize(800, 500);
+    setLocationRelativeTo(null);
+    window.pack();
+    setVisible(true);
+  }
+  
+  class North extends JPanel {
+    
+    North() {
+      setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+      add(new JLabel("                      "));
+      JLabel newLabel = new JLabel("New: ");
+      add(newLabel);
+      add(box);
+      box.addActionListener(new NewLis());
+      add(searchLabel);
+      searchLabel.addMouseListener(new ClearLis());
+      add(new JLabel("  "));
+      JButton searchButton = new JButton("Search");
+      add(searchButton);
+      searchButton.addActionListener(new SearchLis());
+      add(new JLabel("  "));
+      JButton hide = new JButton("Hide");
+      add(hide);
+      hide.addActionListener(new HideLis());
+      add(new JLabel("  "));
+      JButton remove = new JButton("Remove");
+      add(remove);
+      remove.addActionListener(new RemoveLis());
+      add(new JLabel("  "));
+      JButton whatIsHere = new JButton("What is here?");
+      add(whatIsHere);
+      whatIsHere.addActionListener(new WhatLis());
+      add(new JLabel("                     "));
+    }
+  }
+  
+  class East extends JPanel {
+    East() {
+      setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+      list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+      add(new JLabel("Categories:"));
+      add(scroll);
+      JButton hideCat = new JButton("Hide Category");
+      add(hideCat);
+      hideCat.addActionListener(new HideCatLis());
+      ListSelectionListener listListener = new ListSelectionListener() {
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+          for (Map.Entry<Position, Place> pp : positionMap.entrySet()) {
+            try {
+              
+              if (pp.getValue().getCategory().equals(list.getSelectedValue())) {
+                pp.getValue().setFolded(true);
+                pp.getValue().setVisible(true);
+              }
+            } catch (NullPointerException eve) {
+            }
+          }
+          background.validate();
+          background.repaint();
+        }
+      };
+      list.addListSelectionListener(listListener);
+    }
+  }
+  
+  class OpenLis implements ActionListener {
+    @Override
+    public void actionPerformed(ActionEvent eve) {
+      String str = System.getProperty(".");
+      JFileChooser fileChooser = new JFileChooser(str);
+      FileFilter filter = new FileNameExtensionFilter("Bilder", "jpg", "gif", "png");
+      fileChooser.setFileFilter(filter);
+      int file = fileChooser.showOpenDialog(Gui.this);
+      
+      if (file != JFileChooser.APPROVE_OPTION) {
+        return;
+      }
+      File selected = fileChooser.getSelectedFile();
+      String fileName = selected.getAbsolutePath();
+      background = new Background(fileName);
+      scrollBack = new JScrollPane(background);
+      scrollBack.setMaximumSize(new Dimension(background.getWidth(), background.getHeight()));
+      add(scrollBack, BorderLayout.CENTER);
+      pack();
+      validate();
+      repaint();
+    }
+  }
+  
+  class Background extends JPanel {
+    private ImageIcon picture;
+    public Background(String fileName) {
+      picture = new ImageIcon(fileName);
+      setPreferredSize(new Dimension(picture.getIconWidth(), picture.getIconHeight()));
+      setLayout(null); // för att kunna sätta triangel vart som helst
+    }
+    @Override
+    protected void paintComponent(Graphics g) {
+      super.paintComponent(g);
+      g.drawImage(picture.getImage(), 0, 0, picture.getIconWidth(), picture.getIconHeight(), this);
+      // placering,storlek
+    }
+  }
+  
+  class NewPlace extends MouseAdapter {
+    @Override
+    public void mouseClicked(MouseEvent mev) {
+      Place place = null;
+      Position newPos = new Position(mev.getX() - 15, mev.getY() - 30);
+      
+      if (box.getSelectedItem().equals("Named")) {
+        JPanel namedPanel = new JPanel();
+        namedPanel.add(new JLabel("Ange namn: "));
+        JTextField nameInput = new JTextField(10);
+        namedPanel.add(nameInput);
+        int nameDialog = JOptionPane.showConfirmDialog(null, namedPanel, "Ange namn",
+                                                       JOptionPane.OK_CANCEL_OPTION);
+        
+        if (nameInput.getText().equals("") && nameDialog == JOptionPane.OK_OPTION) {
+          JOptionPane.showMessageDialog(null, "Du har inte angivit namn");
+        }
+        else if (nameDialog == JOptionPane.OK_OPTION && !nameInput.getText().equals("")) {
+          place = new NamedPlace(nameInput.getText(), newPos, list.getSelectedValue());
+          control = true;
+        }
+        
+      } else if (box.getSelectedItem().equals("Described")) {
+        JPanel descPanel = new JPanel();
+        descPanel.add(new JLabel("Ange namn: "));
+        JTextField nameInput = new JTextField(10);
+        descPanel.add(nameInput);
+        descPanel.add(new JLabel("Ange beskrivning: "));
+        JTextField descInput = new JTextField(10);
+        descPanel.add(descInput);
+        int descDialog = JOptionPane.showConfirmDialog(null, descPanel, "Ange namn",
+                                                       JOptionPane.OK_CANCEL_OPTION);
+        
+        if ((descInput.getText().equals("") || nameInput.getText().equals(""))
+            && descDialog == JOptionPane.OK_OPTION) {
+          JOptionPane.showMessageDialog(null, "Du har inte angivit namn/beskrivning.");
+        } else if (descDialog == JOptionPane.OK_OPTION && !nameInput.getText().equals("")
+                   && !descInput.getText().equals("")) {
+          place = new DescPlace(nameInput.getText(), newPos, list.getSelectedValue(), descInput.getText());
+          control = true;
+        }
+        
+      }
+      if (control) {
+        addPlaceMaps(place);
+        changed = true;
+        background.validate();
+        background.repaint();
+        control = false;
+      }
+      background.removeMouseListener(this);
+      background.setCursor(Cursor.getDefaultCursor());
+    }
+  }
+  
+  public void addPlaceMaps(Place place) {
+    background.add(place);
+    place.addMouseListener(new MouseFocus());
+    positionMap.put(place.getPos(), place);
+    
+    if (namedMap.containsKey(place.getName())) {
+      namedMap.get(place.getName()).add(place);
+    } else {
+      namedMap.put(place.getName(), new ArrayList<>());
+      namedMap.get(place.getName()).add(place);
+    }
+    
+    if (catMap.containsKey(place.getCategory())) {
+      catMap.get(place.getCategory()).add(place);
+    } else {
+      catMap.put(place.getCategory(), new ArrayList<>());
+      catMap.get(place.getCategory()).add(place);
+    }
+  }
+  
+  class HideCatLis implements ActionListener {
+    @Override
+    public void actionPerformed(ActionEvent ave) {
+      
+      if (list.getSelectedValue() != null) {
+        for (Place p : catMap.get(list.getSelectedValue())) {
+          p.setVisible(false);
+          p.setMarked(false);
+        }
+      }
+      markedList.clear();
+      background.validate();
+      background.repaint();
+    }
+  }
+  
+  class HideLis implements ActionListener {
+    @Override
+    public void actionPerformed(ActionEvent ave) {
+      Iterator<Place> itr = markedList.iterator();
+      
+      while (itr.hasNext()) {
+        Place next = (Place) itr.next();
+        next.setVisible(false);
+        next.setBorder(null);
+      }
+      markedList.clear();
+      validate();
+      repaint();
+    }
+  }
+  
+  class RemoveLis implements ActionListener {
+    @Override
+    public void actionPerformed(ActionEvent ave) {
+      Iterator<Place> itr = markedList.iterator();
+      
+      while (itr.hasNext()) {
+        Place next = (Place) itr.next();
+        positionMap.remove(next.getPos());
+        namedMap.get(next.getName()).remove(next);
+        
+        if (namedMap.get(next.getName()).isEmpty()) {
+          namedMap.remove(next.getName());
+        }
+        catMap.get(next.getCategory()).remove(next);
+        
+        if (catMap.get(next.getCategory()).isEmpty()) {
+          catMap.remove(next.getCategory());
+        }
+        background.remove(next);
+        itr.remove();
+      }
+      changed = true;
+      repaint();
+      markedList.clear();
+    }
+  }
+  
+  class NewLis implements ActionListener {
+    @Override
+    public void actionPerformed(ActionEvent ave) {
+      background.addMouseListener(place);
+      background.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+    }
+  }
+  
+  class MouseFocus extends MouseAdapter {
+    @Override
+    public void mousePressed(MouseEvent mev) {
+      Place markedPlace = (Place) mev.getSource();
+      if (mev.getButton() == MouseEvent.BUTTON1) {
+        markedPlace.setMarked(!markedPlace.getMarked());
+        
+        if (markedPlace.getMarked() == true) {
+          markedPlace.setBorder(new LineBorder(Color.RED));
+          markedList.add(markedPlace);
+        } else {
+          markedList.remove(markedPlace);
+          markedPlace.setBorder(null);
+        }
+      } else if (mev.getButton() == MouseEvent.BUTTON3) {
+        markedPlace.setFolded(!markedPlace.getFolded());
+        repaint();
+      }
+    }
+  }
+  
+  public class LoadPlaces implements ActionListener {
+    @Override
+    public void actionPerformed(ActionEvent ave) {
+      try {
+        Place place = null;
+        String str = System.getProperty(".");
+        JFileChooser fileChooser = new JFileChooser(str);
+        FileFilter filter = new FileNameExtensionFilter("Places", "places");
+        fileChooser.setFileFilter(filter);
+        int file = fileChooser.showOpenDialog(Gui.this);
+        
+        if (file != JFileChooser.APPROVE_OPTION) {
+          return;
+        }
+        File selected = fileChooser.getSelectedFile();
+        FileReader reader = new FileReader(selected.getAbsolutePath());
+        BufferedReader br = new BufferedReader(reader);
+        String line;
+        
+        while ((line = br.readLine()) != null) {
+          String[] tokens = line.split(",");
+          String category = tokens[1];
+          int x = Integer.parseInt(tokens[2]);
+          int y = Integer.parseInt(tokens[3]);
+          String name = tokens[4];
+          if (tokens[0].equals("Named")) {
+            place = new NamedPlace(name, new Position(x, y), category);
+          } else if (tokens[0].equals("Described")) {
+            String description = tokens[5];
+            place = new DescPlace(name, new Position(x, y), category, description);
+          }
+          addPlaceMaps(place);
+        }
+        validate();
+        repaint();
+        br.close();
+        reader.close();
+      } catch (FileNotFoundException e) {
+        JOptionPane.showMessageDialog(null, "Kan inte öppna filen");
+      } catch (IOException e) {
+        JOptionPane.showMessageDialog(null, "Fel :" + e.getMessage());
+      }
+    }
+  }
+  
+  class SavePlaces implements ActionListener {
+    @Override
+    public void actionPerformed(ActionEvent ave) {
+      try {
+        String str = System.getProperty(".");
+        JFileChooser fileChooser = new JFileChooser(str);
+        int file = fileChooser.showSaveDialog(Gui.this);
+        if (file != JFileChooser.APPROVE_OPTION) {
+          return;
+        }
+        File selected = fileChooser.getSelectedFile();
+        FileWriter outFile = new FileWriter(selected + ".places");
+        PrintWriter out = new PrintWriter(outFile);
+        for (Place p : positionMap.values()) {
+          if (p instanceof DescPlace) {
+            out.println("Described" + "," + p.getCategory() + "," + p.getX() + "," + p.getY() + ","
+                        + p.getName() + "," + ((DescPlace) p).getDescription());
+          } else {
+            out.println(
+                        "Named" + "," + p.getCategory() + "," + p.getX() + "," + p.getY() + "," + p.getName());
+          }
+        }
+        changed = false;
+        out.close();
+        outFile.close();
+      } catch (FileNotFoundException e) {
+        JOptionPane.showMessageDialog(null, "Kan inte öppna filen.");
+      } catch (IOException e) {
+        JOptionPane.showMessageDialog(null, "Fel: " + e.getMessage());
+      }
+    }
+  }
+  
+  public void exitFrame() {
+    if (changed == true) {
+      int confirm = JOptionPane.showOptionDialog(window, "Du har osparade förändringar, vill du avsluta ändå?",
+                                                 "Exit Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
+      if (confirm == JOptionPane.YES_OPTION) {
+        System.exit(0);
+      }
+    } else {
+      System.exit(0);
+    }
+  }
+  
+  class WindowLis extends WindowAdapter {
+    @Override
+    public void windowClosing(WindowEvent e) {
+      exitFrame();
+    }
+  }
+  
+  class ExitLis implements ActionListener {
+    @Override
+    public void actionPerformed(ActionEvent ave) {
+      exitFrame();
+    }
+  }
+  
+  class SearchLis implements ActionListener {
+    @Override
+    public void actionPerformed(ActionEvent ave) {
+      if (!searchLabel.getText().equals("")) {
+        
+        String name = searchLabel.getText();
+        Iterator<Place> itr = markedList.iterator();
+        while (itr.hasNext()) {
+          Place p = (Place) itr.next();
+          p.setBorder(null);
+          
+        }
+        markedList.clear();
+        if (namedMap.get(name) != null) {
+          for (Place p : namedMap.get(name)) {
+            
+            p.setVisible(true);
+            p.setBorder(new LineBorder(Color.RED));
+            markedList.add(p);
+          }
+        }
+      }
+    }
+  }
+  
+  class WhatLis implements ActionListener {
+    @Override
+    public void actionPerformed(ActionEvent ave) {
+      background.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+      background.addMouseListener(wis);
+    }
+  }
+  
+  class WhatIsHere extends MouseAdapter {
+    @Override
+    public void mouseClicked(MouseEvent mev) {
+      for (int i = mev.getX() - 10; i < mev.getX() + 10; i++) {
+        for (int j = mev.getY() - 10; j < mev.getY() + 10; j++) {
+          Position area = new Position(i - 15, j - 30);
+          if (positionMap.containsKey(area)) {
+            Place p = positionMap.get(area);
+            p.setVisible(true);
+          }
+        }
+      }
+      background.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+      background.removeMouseListener(wis);
+      repaint();
+    }
+  }
+  
+  class ClearLis extends MouseAdapter {
+    @Override
+    public void mouseClicked(MouseEvent mev) {
+      searchLabel.setText("");
+      searchLabel.removeMouseListener(this);
+    }
+  }
+  
+  public static void main(String[] args) {
+    
+    new Gui();
+  }
+}
