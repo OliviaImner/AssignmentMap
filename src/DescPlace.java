@@ -1,5 +1,3 @@
-//this is a comment
-
 import java.awt.*;
 public class DescPlace extends Place {
 	private String description;
