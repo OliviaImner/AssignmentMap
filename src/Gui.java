@@ -25,11 +25,10 @@ public class Gui extends JFrame {
   NewPlace place = new NewPlace();
   WhatIsHere wis = new WhatIsHere();
   
-  private JRadioButton nameButton = new JRadioButton("Named");
+  private JRadioButton nameButton = new JRadioButton("Named", true );
   private JRadioButton DButton = new JRadioButton("Described");
   ButtonGroup group = new ButtonGroup();
- 
-  
+
   Map<Position, Place> positionMap = new HashMap<>();
   Collection<Place> markedList = new ArrayList<>();
   Map<String, Collection<Place>> namedMap = new HashMap<>();
@@ -75,8 +74,13 @@ public class Gui extends JFrame {
       JButton newButton = new JButton ("New");
       add(newButton);
       
-      group.add(nameButton);
       group.add(DButton);
+      group.add(nameButton);
+      Box box = Box.createVerticalBox();
+      box.add(nameButton);
+      box.add(DButton);
+      add(box);
+      
       nameButton.addActionListener(new NewLis());
       DButton.addActionListener(new NewLis());
       
