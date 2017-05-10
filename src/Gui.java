@@ -21,13 +21,14 @@ public class Gui extends JFrame {
   private JList<String> list = new JList<>(option);
   private JScrollPane scroll = new JScrollPane(list);
   private JTextField searchLabel = new JTextField("Search...");
-  private boolean control = false;
+  private boolean controlit = false;
   NewPlace place = new NewPlace();
   WhatIsHere wis = new WhatIsHere();
   
   private JRadioButton nameButton = new JRadioButton("Named");
   private JRadioButton DButton = new JRadioButton("Described");
   ButtonGroup group = new ButtonGroup();
+ 
   
   Map<Position, Place> positionMap = new HashMap<>();
   Collection<Place> markedList = new ArrayList<>();
@@ -41,12 +42,14 @@ public class Gui extends JFrame {
     add(new East(), BorderLayout.EAST);
     add(new North(), BorderLayout.NORTH);
     JMenuBar menuBar = new JMenuBar();
+    
     JMenu menu = new JMenu("Archive");
     menuBar.add(menu);
     JMenuItem newMap = new JMenuItem("New Map ");
     JMenuItem load = new JMenuItem("Load Places");
     JMenuItem save = new JMenuItem("Save ");
     JMenuItem exit = new JMenuItem("Exit ");
+    
     menu.add(newMap);
     newMap.addActionListener(new OpenLis());
     menu.add(load);
@@ -55,6 +58,7 @@ public class Gui extends JFrame {
     save.addActionListener(new SavePlaces());
     menu.add(exit);
     exit.addActionListener(new ExitLis());
+    
     setJMenuBar(menuBar);
     setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
     setSize(800, 500);
@@ -64,14 +68,18 @@ public class Gui extends JFrame {
   }
   
   class North extends JPanel {
-    
+    // north panel
     North() {
       setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
       add(new JLabel("                      "));
-      JLabel newLabel = new JLabel("New: ");
-      add(newLabel);
-      add(box);
-      box.addActionListener(new NewLis());
+      JButton newButton = new JButton ("New");
+      add(newButton);
+      
+      group.add(nameButton);
+      group.add(DButton);
+      nameButton.addActionListener(new NewLis());
+      DButton.addActionListener(new NewLis());
+      
       add(searchLabel);
       searchLabel.addMouseListener(new ClearLis());
       add(new JLabel("  "));
@@ -87,7 +95,7 @@ public class Gui extends JFrame {
       add(remove);
       remove.addActionListener(new RemoveLis());
       add(new JLabel("  "));
-      JButton whatIsHere = new JButton("What is here?");
+      JButton whatIsHere = new JButton("Coordinates");
       add(whatIsHere);
       whatIsHere.addActionListener(new WhatLis());
       add(new JLabel("                     "));
@@ -95,6 +103,7 @@ public class Gui extends JFrame {
   }
   
   class East extends JPanel {
+    //right panel
     East() {
       setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
       list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -129,7 +138,7 @@ public class Gui extends JFrame {
     public void actionPerformed(ActionEvent eve) {
       String str = System.getProperty(".");
       JFileChooser fileChooser = new JFileChooser(str);
-      FileFilter filter = new FileNameExtensionFilter("Bilder", "jpg", "gif", "png");
+      FileFilter filter = new FileNameExtensionFilter("Pictures", "jpg", "gif", "png");
       fileChooser.setFileFilter(filter);
       int file = fileChooser.showOpenDialog(Gui.this);
       
@@ -153,13 +162,14 @@ public class Gui extends JFrame {
     public Background(String fileName) {
       picture = new ImageIcon(fileName);
       setPreferredSize(new Dimension(picture.getIconWidth(), picture.getIconHeight()));
-      setLayout(null); // för att kunna sätta triangel vart som helst
+      setLayout(null);
+      //This is for putting out the triangel at any place on the map
     }
     @Override
     protected void paintComponent(Graphics g) {
       super.paintComponent(g);
       g.drawImage(picture.getImage(), 0, 0, picture.getIconWidth(), picture.getIconHeight(), this);
-      // placering,storlek
+      // Placing and the size
     }
   }
   
@@ -169,49 +179,49 @@ public class Gui extends JFrame {
       Place place = null;
       Position newPos = new Position(mev.getX() - 15, mev.getY() - 30);
       
-      if (box.getSelectedItem().equals("Named")) {
+      if (nameButton.isSelected()) {
         JPanel namedPanel = new JPanel();
-        namedPanel.add(new JLabel("Ange namn: "));
+        namedPanel.add(new JLabel("Name: "));
         JTextField nameInput = new JTextField(10);
         namedPanel.add(nameInput);
-        int nameDialog = JOptionPane.showConfirmDialog(null, namedPanel, "Ange namn",
+        int nameDialog = JOptionPane.showConfirmDialog(null, namedPanel, "Name:",
                                                        JOptionPane.OK_CANCEL_OPTION);
         
         if (nameInput.getText().equals("") && nameDialog == JOptionPane.OK_OPTION) {
-          JOptionPane.showMessageDialog(null, "Du har inte angivit namn");
+          JOptionPane.showMessageDialog(null, "You haven't typed in correct");
         }
         else if (nameDialog == JOptionPane.OK_OPTION && !nameInput.getText().equals("")) {
           place = new NamedPlace(nameInput.getText(), newPos, list.getSelectedValue());
-          control = true;
+          controlit = true;
         }
         
-      } else if (box.getSelectedItem().equals("Described")) {
+      } else if (DButton.isSelected()) {
         JPanel descPanel = new JPanel();
-        descPanel.add(new JLabel("Ange namn: "));
+        descPanel.add(new JLabel("Name: "));
         JTextField nameInput = new JTextField(10);
         descPanel.add(nameInput);
-        descPanel.add(new JLabel("Ange beskrivning: "));
+        descPanel.add(new JLabel("Description: "));
         JTextField descInput = new JTextField(10);
         descPanel.add(descInput);
-        int descDialog = JOptionPane.showConfirmDialog(null, descPanel, "Ange namn",
+        int descDialog = JOptionPane.showConfirmDialog(null, descPanel, "Name",
                                                        JOptionPane.OK_CANCEL_OPTION);
         
         if ((descInput.getText().equals("") || nameInput.getText().equals(""))
             && descDialog == JOptionPane.OK_OPTION) {
-          JOptionPane.showMessageDialog(null, "Du har inte angivit namn/beskrivning.");
-        } else if (descDialog == JOptionPane.OK_OPTION && !nameInput.getText().equals("")
-                   && !descInput.getText().equals("")) {
+          JOptionPane.showMessageDialog(null, "You haven't typed in name or description!");
+        } else if (descDialog == JOptionPane.OK_OPTION && !nameInput.getText().equals("") && !descInput.getText().equals("")) {
+          
           place = new DescPlace(nameInput.getText(), newPos, list.getSelectedValue(), descInput.getText());
-          control = true;
+          controlit = true;
         }
         
       }
-      if (control) {
+      if (controlit) {
         addPlaceMaps(place);
         changed = true;
         background.validate();
         background.repaint();
-        control = false;
+        controlit = false;
       }
       background.removeMouseListener(this);
       background.setCursor(Cursor.getDefaultCursor());
@@ -364,9 +374,9 @@ public class Gui extends JFrame {
         br.close();
         reader.close();
       } catch (FileNotFoundException e) {
-        JOptionPane.showMessageDialog(null, "Kan inte öppna filen");
+        JOptionPane.showMessageDialog(null, "Can't open file");
       } catch (IOException e) {
-        JOptionPane.showMessageDialog(null, "Fel :" + e.getMessage());
+        JOptionPane.showMessageDialog(null, "Error :" + e.getMessage());
       }
     }
   }
@@ -397,16 +407,16 @@ public class Gui extends JFrame {
         out.close();
         outFile.close();
       } catch (FileNotFoundException e) {
-        JOptionPane.showMessageDialog(null, "Kan inte öppna filen.");
+        JOptionPane.showMessageDialog(null, "Can't open the file.");
       } catch (IOException e) {
-        JOptionPane.showMessageDialog(null, "Fel: " + e.getMessage());
+        JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
       }
     }
   }
   
   public void exitFrame() {
     if (changed == true) {
-      int confirm = JOptionPane.showOptionDialog(window, "Du har osparade förändringar, vill du avsluta ändå?",
+      int confirm = JOptionPane.showOptionDialog(window, "You have unsaved changes, do you want to guit anaway?",
                                                  "Exit Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
       if (confirm == JOptionPane.YES_OPTION) {
         System.exit(0);
