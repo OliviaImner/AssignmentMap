@@ -337,21 +337,18 @@ public class Gui extends JFrame {
         }
       } else if (mev.getButton() == MouseEvent.BUTTON3) {
         
-//        if (namedMap.containsKey(place.getName())) {
-//          namedMap.get(place.getName())
-//        
-        
         for (Place p : positionMap.values()) {
           if (p instanceof DescPlace) {
-            JOptionPane.showMessageDialog(null, "The place has coordinates: " , p.getCategory() + p.getName() + "{" + p.getX() + "," + p.getY() + "}" + ((DescPlace) p).getDescription() + "Place infomation ",  JOptionPane.INFORMATION_MESSAGE);
-          } else {
-            JOptionPane.showMessageDialog(null, "The place has coordinates: " + p.getName() + "{" + p.getX() + "," + p.getY() + "}",
-                                                      "Place infomation ", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Name: " + p.getName() + "{" + p.getX() + "," + p.getY() + "}. \n" +
+                                          "Description: " + ((DescPlace) p).getDescription(), "Place infomation ", JOptionPane.INFORMATION_MESSAGE);
             
+          } else {
+            JOptionPane.showMessageDialog(null, p.getName() + "{" + p.getX() + "," + p.getY() + "}",
+                                                      "Place infomation ", JOptionPane.INFORMATION_MESSAGE);
                 }
           }
 
-        markedPlace.setFolded(!markedPlace.getFolded());
+        //markedPlace.setFolded(!markedPlace.getFolded());
         repaint();
       }
     }
