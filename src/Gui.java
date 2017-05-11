@@ -73,7 +73,7 @@ public class Gui extends JFrame {
       add(new JLabel("                      "));
       JButton newButton = new JButton ("New");
       add(newButton);
-      
+    
       group.add(DButton);
       group.add(nameButton);
       Box box = Box.createVerticalBox();
@@ -323,6 +323,8 @@ public class Gui extends JFrame {
     @Override
     public void mousePressed(MouseEvent mev) {
       Place markedPlace = (Place) mev.getSource();
+      Iterator<Place> it = markedList.iterator();
+      
       if (mev.getButton() == MouseEvent.BUTTON1) {
         markedPlace.setMarked(!markedPlace.getMarked());
         
@@ -334,6 +336,21 @@ public class Gui extends JFrame {
           markedPlace.setBorder(null);
         }
       } else if (mev.getButton() == MouseEvent.BUTTON3) {
+        
+//        if (namedMap.containsKey(place.getName())) {
+//          namedMap.get(place.getName())
+//        
+        
+        for (Place p : positionMap.values()) {
+          if (p instanceof DescPlace) {
+            JOptionPane.showMessageDialog(null, "The place has coordinates: " , p.getCategory() + p.getName() + "{" + p.getX() + "," + p.getY() + "}" + ((DescPlace) p).getDescription() + "Place infomation ",  JOptionPane.INFORMATION_MESSAGE);
+          } else {
+            JOptionPane.showMessageDialog(null, "The place has coordinates: " + p.getName() + "{" + p.getX() + "," + p.getY() + "}",
+                                                      "Place infomation ", JOptionPane.INFORMATION_MESSAGE);
+            
+                }
+          }
+
         markedPlace.setFolded(!markedPlace.getFolded());
         repaint();
       }
