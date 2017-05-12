@@ -323,7 +323,6 @@ public class Gui extends JFrame {
     @Override
     public void mousePressed(MouseEvent mev) {
       Place markedPlace = (Place) mev.getSource();
-      Iterator<Place> it = markedList.iterator();
       
       if (mev.getButton() == MouseEvent.BUTTON1) {
         markedPlace.setMarked(!markedPlace.getMarked());
@@ -337,19 +336,23 @@ public class Gui extends JFrame {
         }
       } else if (mev.getButton() == MouseEvent.BUTTON3) {
         
-        for (Place p : positionMap.values()) {
-          if (p instanceof DescPlace) {
+            for (Place p : positionMap.values()) {
+              if(p.equals(markedPlace)){
+              
+                  if (p instanceof DescPlace) {
+            
             JOptionPane.showMessageDialog(null, "Name: " + p.getName() + "{" + p.getX() + "," + p.getY() + "}. \n" +
                                           "Description: " + ((DescPlace) p).getDescription(), "Place infomation ", JOptionPane.INFORMATION_MESSAGE);
             
-          } else {
+                  } else if (p instanceof NamedPlace) {
             JOptionPane.showMessageDialog(null, p.getName() + "{" + p.getX() + "," + p.getY() + "}",
                                                       "Place infomation ", JOptionPane.INFORMATION_MESSAGE);
+            break;
                 }
-          }
-
+              }
+            }
         //markedPlace.setFolded(!markedPlace.getFolded());
-        repaint();
+        //repaint();
       }
     }
   }
@@ -361,7 +364,7 @@ public class Gui extends JFrame {
         Place place = null;
         String str = System.getProperty(".");
         JFileChooser fileChooser = new JFileChooser(str);
-        FileFilter filter = new FileNameExtensionFilter("Places", "places");
+        FileFilter filter = new FileNameExtensionFilter("Places", "places", "txt");
         fileChooser.setFileFilter(filter);
         int file = fileChooser.showOpenDialog(Gui.this);
         
