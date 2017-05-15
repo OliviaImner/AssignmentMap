@@ -23,7 +23,7 @@ public class Gui extends JFrame {
   private JTextField searchLabel = new JTextField("Search...");
   private boolean controlit = false;
   NewPlace place = new NewPlace();
-  WhatIsHere wis = new WhatIsHere();
+  Coordinates wis = new Coordinates();
   
   private JRadioButton nameButton = new JRadioButton("Named", true );
   private JRadioButton DButton = new JRadioButton("Described");
@@ -99,9 +99,9 @@ public class Gui extends JFrame {
       add(remove);
       remove.addActionListener(new RemoveLis());
       add(new JLabel("  "));
-      JButton whatIsHere = new JButton("Coordinates");
-      add(whatIsHere);
-      whatIsHere.addActionListener(new WhatLis());
+      JButton coordinateButton = new JButton("Coordinates");
+      add(coordinateButton);
+      coordinateButton.addActionListener(new CoordinateListener());
       add(new JLabel("                     "));
     }
   }
@@ -485,7 +485,7 @@ public class Gui extends JFrame {
     }
   }
   
-  class WhatLis implements ActionListener {
+  class CoordinateListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ave) {
       background.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
@@ -493,7 +493,7 @@ public class Gui extends JFrame {
     }
   }
   
-  class WhatIsHere extends MouseAdapter {
+  class Coordinates extends MouseAdapter {
     @Override
     public void mouseClicked(MouseEvent mev) {
       for (int i = mev.getX() - 10; i < mev.getX() + 10; i++) {
