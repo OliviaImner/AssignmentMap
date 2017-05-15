@@ -23,7 +23,7 @@ public class Gui extends JFrame {
   private JTextField searchLabel = new JTextField("Search...");
   private boolean controlit = false;
   NewPlace place = new NewPlace();
-  Coordinates wis = new Coordinates();
+  Coordinates cor = new Coordinates();
   
   private JRadioButton nameButton = new JRadioButton("Named", true );
   private JRadioButton DButton = new JRadioButton("Described");
@@ -487,11 +487,23 @@ public class Gui extends JFrame {
   
   class CoordinateListener implements ActionListener {
     @Override
-    public void actionPerformed(ActionEvent ave) {
-      background.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
-      background.addMouseListener(wis);
+    public void actionPerformed(ActionEvent ave){
+    
+      JPanel coordinatePanel = new JPanel();
+      coordinatePanel.add(new JLabel("X: "));
+      JTextField xInput = new JTextField(10);
+      coordinatePanel.add(xInput);
+      coordinatePanel.add(new JLabel("Y: "));
+      JTextField yInput = new JTextField(10);
+      coordinatePanel.add(yInput);
+      int descDialog = JOptionPane.showConfirmDialog(null, coordinatePanel, "Input coordinates",
+                                                     JOptionPane.OK_CANCEL_OPTION);
+      
+      }
+//      background.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+//      background.addMouseListener(cor);
     }
-  }
+
   
   class Coordinates extends MouseAdapter {
     @Override
@@ -501,12 +513,14 @@ public class Gui extends JFrame {
           Position area = new Position(i - 15, j - 30);
           if (positionMap.containsKey(area)) {
             Place p = positionMap.get(area);
+            
+            
             p.setVisible(true);
           }
         }
       }
       background.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-      background.removeMouseListener(wis);
+      background.removeMouseListener(cor);
       repaint();
     }
   }
