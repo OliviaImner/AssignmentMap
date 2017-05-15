@@ -341,21 +341,20 @@ public class Gui extends JFrame {
               
                   if (p instanceof DescPlace) {
             
-            JOptionPane.showMessageDialog(null, "Name: " + p.getName() + "{" + p.getX() + "," + p.getY() + "}. \n" +
+                      JOptionPane.showMessageDialog(null, "Name: " + p.getName() + "{" + p.getX() + "," + p.getY() + "}. \n" +
                                           "Description: " + ((DescPlace) p).getDescription(), "Place infomation ", JOptionPane.INFORMATION_MESSAGE);
             
                   } else if (p instanceof NamedPlace) {
-            JOptionPane.showMessageDialog(null, p.getName() + "{" + p.getX() + "," + p.getY() + "}",
+                    
+                      JOptionPane.showMessageDialog(null, p.getName() + "{" + p.getX() + "," + p.getY() + "}",
                                                       "Place infomation ", JOptionPane.INFORMATION_MESSAGE);
             break;
-                }
               }
             }
-        //markedPlace.setFolded(!markedPlace.getFolded());
-        //repaint();
+          }
+        }
       }
     }
-  }
   
   public class LoadPlaces implements ActionListener {
     @Override
