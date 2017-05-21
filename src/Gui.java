@@ -24,6 +24,7 @@ public class Gui extends JFrame {
   private boolean controlit = false;
   NewPlace place = new NewPlace();
   Coordinates cor = new Coordinates();
+  HideLis showHidden = new HideLis();
   
   private JRadioButton nameButton = new JRadioButton("Named", true );
   private JRadioButton DButton = new JRadioButton("Described");
@@ -484,25 +485,74 @@ public class Gui extends JFrame {
       }
     }
   }
-  
+
   class CoordinateListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ave){
-    
+      
       JPanel coordinatePanel = new JPanel();
       coordinatePanel.add(new JLabel("X: "));
       JTextField xInput = new JTextField(10);
       coordinatePanel.add(xInput);
+
       coordinatePanel.add(new JLabel("Y: "));
       JTextField yInput = new JTextField(10);
       coordinatePanel.add(yInput);
-      int descDialog = JOptionPane.showConfirmDialog(null, coordinatePanel, "Input coordinates",
-                                                     JOptionPane.OK_CANCEL_OPTION);
       
+
+      int coordinateDialog = JOptionPane.showConfirmDialog(null, coordinatePanel, "Input coordinates",
+                                                     JOptionPane.OK_CANCEL_OPTION);
+    
+
+      if(coordinateDialog == JOptionPane.OK_OPTION){
+
+        try{
+        
+              int coorX = Integer.parseInt(xInput.getText());
+              int coorY = Integer.parseInt(yInput.getText());
+        
+          if (coorX > 0 && coorX < background.getWidth() && coorY > 0 && coorY < background.getHeight()){
+            Position theCoordinates = new Position(coorX, coorY);
+            
+                  if(positionMap.containsKey(theCoordinates)){
+                    Iterator<Place> itr = markedList.iterator();
+                    while (itr.hasNext()) {
+                      Place p = itr.next();
+                      p.setMarked(true);
+                      itr.remove();
+                      }
+                  
+                      Place pp = positionMap.get(ave);
+                      pp.setVisible(true);
+                      pp.setMarked(false);
+                      markedList.add(pp);
+                    }else{
+                        JOptionPane.showMessageDialog
+                        (null, "There is no Place on that Position", "Information", JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                    }
+            
+          }else{
+              JOptionPane.showMessageDialog
+                (null, "These values are outside of legal values for this map", "Information", JOptionPane.INFORMATION_MESSAGE);
+          }
+
+          }catch(NumberFormatException e){
+          JOptionPane.showMessageDialog(null, "You need to write in numbers!");
+        }
       }
+    }
+  }
+  
+        
+              //if ((xInput.equals("") || yInput.getText().equals(""))
+                    //  && coordinateDialog == JOptionPane.OK_OPTION) {
+                   //   JOptionPane.showMessageDialog(null, "You haven't typed in coordinates!");
+                
+
+
 //      background.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 //      background.addMouseListener(cor);
-    }
 
   
   class Coordinates extends MouseAdapter {
