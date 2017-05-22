@@ -524,7 +524,7 @@ public class Gui extends JFrame {
                     markedList.clear();
                     Place pp = positionMap.get(theCoordinates);
                     pp.setVisible(true);
-                    pp.setMarked(true);
+                    pp.setBorder(new LineBorder(Color.RED));
                     markedList.add(pp);
             
                     }else{
@@ -549,12 +549,7 @@ public class Gui extends JFrame {
               //if ((xInput.equals("") || yInput.getText().equals(""))
                     //  && coordinateDialog == JOptionPane.OK_OPTION) {
                    //   JOptionPane.showMessageDialog(null, "You haven't typed in coordinates!");
-                
-
-
-//      background.setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
-//      background.addMouseListener(cor);
-
+  
   
   class Coordinates extends MouseAdapter {
     @Override
