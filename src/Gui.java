@@ -524,18 +524,18 @@ public class Gui extends JFrame {
                     markedList.clear();
                     Place pp = positionMap.get(theCoordinates);
                     pp.setVisible(true);
-                    pp.getMarked();
+                    pp.setMarked(true);
                     markedList.add(pp);
             
                     }else{
                         JOptionPane.showMessageDialog
-                        (null, "There is no Place on that Position", "Information", JOptionPane.INFORMATION_MESSAGE);
+                        (null, "There is no place on that position", "Information", JOptionPane.INFORMATION_MESSAGE);
                         return;
                     }
             
           }else{
               JOptionPane.showMessageDialog
-                (null, "These values are outside of legal values for this map", "Information", JOptionPane.INFORMATION_MESSAGE);
+                (null, "These coordiantes are outside of this map", "Information", JOptionPane.INFORMATION_MESSAGE);
           }
 
           }catch(NumberFormatException e){
