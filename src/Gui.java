@@ -545,12 +545,6 @@ public class Gui extends JFrame {
     }
   }
   
-        
-              //if ((xInput.equals("") || yInput.getText().equals(""))
-                    //  && coordinateDialog == JOptionPane.OK_OPTION) {
-                   //   JOptionPane.showMessageDialog(null, "You haven't typed in coordinates!");
-  
-  
   class Coordinates extends MouseAdapter {
     @Override
     public void mouseClicked(MouseEvent mev) {
