@@ -24,7 +24,6 @@ public class Gui extends JFrame {
   private boolean controlit = false;
   NewPlace place = new NewPlace();
   Coordinates cor = new Coordinates();
-  HideLis showHidden = new HideLis();
   
   private JRadioButton nameButton = new JRadioButton("Named", true );
   private JRadioButton DButton = new JRadioButton("Described");
@@ -516,16 +515,18 @@ public class Gui extends JFrame {
             
                   if(positionMap.containsKey(theCoordinates)){
                     Iterator<Place> itr = markedList.iterator();
+                    
                     while (itr.hasNext()) {
                       Place p = itr.next();
-                      p.setMarked(true);
+                      p.setMarked(false);
                       itr.remove();
-                      }
-                  
-                      Place pp = positionMap.get(ave);
-                      pp.setVisible(true);
-                      pp.setMarked(false);
-                      markedList.add(pp);
+                    }
+                    markedList.clear();
+                    Place pp = positionMap.get(theCoordinates);
+                    pp.setVisible(true);
+                    pp.getMarked();
+                    markedList.add(pp);
+            
                     }else{
                         JOptionPane.showMessageDialog
                         (null, "There is no Place on that Position", "Information", JOptionPane.INFORMATION_MESSAGE);
