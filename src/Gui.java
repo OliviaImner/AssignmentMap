@@ -36,7 +36,7 @@ public class Gui extends JFrame {
   
   public Gui() {
     super("Assignment 2");
-    addWindowListener(new WindowLis());
+    addWindowListener(new WindowListener());
     setLayout(new BorderLayout());
     add(new East(), BorderLayout.EAST);
     add(new North(), BorderLayout.NORTH);
@@ -50,13 +50,13 @@ public class Gui extends JFrame {
     JMenuItem exit = new JMenuItem("Exit ");
     
     menu.add(newMap);
-    newMap.addActionListener(new OpenLis());
+    newMap.addActionListener(new OpenListener());
     menu.add(load);
     load.addActionListener(new LoadPlaces());
     menu.add(save);
     save.addActionListener(new SavePlaces());
     menu.add(exit);
-    exit.addActionListener(new ExitLis());
+    exit.addActionListener(new ExitListener());
     
     setJMenuBar(menuBar);
     setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -137,7 +137,7 @@ public class Gui extends JFrame {
     }
   }
   
-  class OpenLis implements ActionListener {
+  class OpenListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent eve) {
       String str = System.getProperty(".");
@@ -183,52 +183,61 @@ public class Gui extends JFrame {
       Place place = null;
       Position newPos = new Position(mev.getX() - 15, mev.getY() - 30);
       
-      if (nameButton.isSelected()) {
-        JPanel namedPanel = new JPanel();
-        namedPanel.add(new JLabel("Name: "));
-        JTextField nameInput = new JTextField(10);
-        namedPanel.add(nameInput);
-        int nameDialog = JOptionPane.showConfirmDialog(null, namedPanel, "Name:",
+        if(!positionMap.containsKey(newPos)){
+        
+        if (nameButton.isSelected()) {
+           JPanel namedPanel = new JPanel();
+           namedPanel.add(new JLabel("Name: "));
+           JTextField nameInput = new JTextField(10);
+           namedPanel.add(nameInput);
+           int nameDialog = JOptionPane.showConfirmDialog(null, namedPanel, "Name:",
                                                        JOptionPane.OK_CANCEL_OPTION);
         
-        if (nameInput.getText().equals("") && nameDialog == JOptionPane.OK_OPTION) {
-          JOptionPane.showMessageDialog(null, "You haven't typed in correct");
-        }
-        else if (nameDialog == JOptionPane.OK_OPTION && !nameInput.getText().equals("")) {
-          place = new NamedPlace(nameInput.getText(), newPos, list.getSelectedValue());
-          controlit = true;
-        }
+               if (nameInput.getText().equals("") && nameDialog == JOptionPane.OK_OPTION) {
+               JOptionPane.showMessageDialog(null, "You haven't typed in correct");
+               }else if (nameDialog == JOptionPane.OK_OPTION && !nameInput.getText().equals("")) {
+               place = new NamedPlace(nameInput.getText(), newPos, list.getSelectedValue());
+               controlit = true;
+               }
         
-      } else if (DButton.isSelected()) {
-        JPanel descPanel = new JPanel();
-        descPanel.add(new JLabel("Name: "));
-        JTextField nameInput = new JTextField(10);
-        descPanel.add(nameInput);
-        descPanel.add(new JLabel("Description: "));
-        JTextField descInput = new JTextField(10);
-        descPanel.add(descInput);
-        int descDialog = JOptionPane.showConfirmDialog(null, descPanel, "Name",
+        }else if (DButton.isSelected()) {
+          JPanel descPanel = new JPanel();
+          descPanel.add(new JLabel("Name: "));
+          JTextField nameInput = new JTextField(10);
+          descPanel.add(nameInput);
+          descPanel.add(new JLabel("Description: "));
+          JTextField descInput = new JTextField(10);
+          descPanel.add(descInput);
+          int descDialog = JOptionPane.showConfirmDialog(null, descPanel, "Name",
                                                        JOptionPane.OK_CANCEL_OPTION);
         
-        if ((descInput.getText().equals("") || nameInput.getText().equals(""))
-            && descDialog == JOptionPane.OK_OPTION) {
-          JOptionPane.showMessageDialog(null, "You haven't typed in name or description!");
-        } else if (descDialog == JOptionPane.OK_OPTION && !nameInput.getText().equals("") && !descInput.getText().equals("")) {
+              if((descInput.getText().equals("") || nameInput.getText().equals(""))
+              && descDialog == JOptionPane.OK_OPTION) {
+              JOptionPane.showMessageDialog(null, "You haven't typed in name or description!");
+              }else if (descDialog == JOptionPane.OK_OPTION && !nameInput.getText().equals("") && !descInput.getText().equals("")) {
           
-          place = new DescPlace(nameInput.getText(), newPos, list.getSelectedValue(), descInput.getText());
-          controlit = true;
+              place = new DescPlace(nameInput.getText(), newPos, list.getSelectedValue(), descInput.getText());
+              controlit = true;
+            }
+          
         }
         
+        if (controlit) {
+          addPlaceMaps(place);
+          changed = true;
+          background.validate();
+          background.repaint();
+          controlit = false;
+        }
+      
+      }else{
+        JOptionPane.showMessageDialog(null, "There is already a place at these coordinates.", "Information",
+                                      JOptionPane.INFORMATION_MESSAGE);
       }
-      if (controlit) {
-        addPlaceMaps(place);
-        changed = true;
-        background.validate();
-        background.repaint();
-        controlit = false;
-      }
+      
       background.removeMouseListener(this);
       background.setCursor(Cursor.getDefaultCursor());
+      
     }
   }
   
@@ -436,7 +445,7 @@ public class Gui extends JFrame {
   
   public void exitFrame() {
     if (changed == true) {
-      int confirm = JOptionPane.showOptionDialog(window, "You have unsaved changes, do you want to guit anaway?",
+      int confirm = JOptionPane.showOptionDialog(window, "You have unsaved changes, do you want to quit anaway?",
                                                  "Exit Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
       if (confirm == JOptionPane.YES_OPTION) {
         System.exit(0);
@@ -446,14 +455,14 @@ public class Gui extends JFrame {
     }
   }
   
-  class WindowLis extends WindowAdapter {
+  class WindowListener extends WindowAdapter {
     @Override
     public void windowClosing(WindowEvent e) {
       exitFrame();
     }
   }
   
-  class ExitLis implements ActionListener {
+  class ExitListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ave) {
       exitFrame();
