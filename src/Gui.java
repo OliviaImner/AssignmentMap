@@ -136,7 +136,7 @@ public class Gui extends JFrame {
       list.addListSelectionListener(listListener);
     }
   }
-  
+  // Insert the map
   class OpenListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent eve) {
@@ -160,23 +160,22 @@ public class Gui extends JFrame {
       repaint();
     }
   }
-  
+  //This is for putting out the triangel at any place on the map
   class Background extends JPanel {
     private ImageIcon picture;
     public Background(String fileName) {
       picture = new ImageIcon(fileName);
       setPreferredSize(new Dimension(picture.getIconWidth(), picture.getIconHeight()));
       setLayout(null);
-      //This is for putting out the triangel at any place on the map
     }
+    // Placing and the size
     @Override
     protected void paintComponent(Graphics g) {
       super.paintComponent(g);
       g.drawImage(picture.getImage(), 0, 0, picture.getIconWidth(), picture.getIconHeight(), this);
-      // Placing and the size
     }
   }
-  
+  // Creates a new place if there's a named place or a described place
   class NewPlace extends MouseAdapter {
     @Override
     public void mouseClicked(MouseEvent mev) {
@@ -230,7 +229,7 @@ public class Gui extends JFrame {
           background.repaint();
           controlit = false;
         }
-      
+      // shows if there's already a place n that position
       }else if (positionMap.containsKey(newPos)) {
         JOptionPane.showMessageDialog(null, "There is already a place at these coordinates.", "Information",
                                       JOptionPane.INFORMATION_MESSAGE);
@@ -241,7 +240,7 @@ public class Gui extends JFrame {
       
     }
   }
-  
+  // add new place to the Maps 
   public void addPlaceMaps(Place place) {
     background.add(place);
     place.addMouseListener(new MouseFocus());
@@ -261,7 +260,7 @@ public class Gui extends JFrame {
       catMap.get(place.getCategory()).add(place);
     }
   }
-  
+  // Hide the categorys on the map
   class HideCatLis implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ave) {
@@ -277,7 +276,7 @@ public class Gui extends JFrame {
       background.repaint();
     }
   }
-  
+  //hide the place on the map
   class HideLis implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ave) {
@@ -293,7 +292,8 @@ public class Gui extends JFrame {
       repaint();
     }
   }
-  
+
+//remove the marked place.
   class RemoveLis implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ave) {
@@ -328,7 +328,7 @@ public class Gui extends JFrame {
       background.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
     }
   }
-  
+  // Mark the place and show information dialog when push on the right button.
   class MouseFocus extends MouseAdapter {
     @Override
     public void mousePressed(MouseEvent mev) {
@@ -365,7 +365,7 @@ public class Gui extends JFrame {
         }
       }
     }
-  
+  // Load the plases.txt file to the map
   public class LoadPlaces implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ave) {
@@ -410,7 +410,7 @@ public class Gui extends JFrame {
       }
     }
   }
-  
+  // save places to the file.
   class SavePlaces implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ave) {
@@ -443,7 +443,7 @@ public class Gui extends JFrame {
       }
     }
   }
-  
+  //Exit dialog
   public void exitFrame() {
     if (changed == true) {
       int confirm = JOptionPane.showOptionDialog(window, "You have unsaved changes, do you want to quit anaway?",
@@ -469,7 +469,7 @@ public class Gui extends JFrame {
       exitFrame();
     }
   }
-  
+  //search for name on the place and it will show the place if it's hidden or not.
   class SearchLis implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ave) {
@@ -494,7 +494,7 @@ public class Gui extends JFrame {
       }
     }
   }
-
+// search after a place with input coordinates and return the place.
   class CoordinateListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ave){
