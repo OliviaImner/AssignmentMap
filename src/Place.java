@@ -22,10 +22,6 @@ public abstract class Place extends JComponent {
 		this.name = name;
 		this.category = category;
 		this.pos = pos;
-		setBounds(pos.getX(), pos.getY(), 30, 30);
-		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		validate();
-		repaint();
 	}
 
 	abstract void drawRect(Graphics g);
@@ -47,14 +43,19 @@ public abstract class Place extends JComponent {
 		}
 		drawRect(g);
 	}
+
 	public String getName() {
 		return name;
 	}
 	public String getCategory() {
 		return category;
 	}
-	public Position getPos() {
-		return pos;
+  public Position getPos(){
+  setBounds(pos.getX(), pos.getY(), 30, 30);
+  setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+  validate();
+  repaint();
+  return pos;
 	}
 	public boolean getMarked() {
 		return marked;

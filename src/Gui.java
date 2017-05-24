@@ -182,8 +182,9 @@ public class Gui extends JFrame {
     public void mouseClicked(MouseEvent mev) {
       Place place = null;
       Position newPos = new Position(mev.getX() - 15, mev.getY() - 30);
+
       
-        if(!positionMap.containsKey(newPos)){
+      if(!positionMap.containsKey(newPos)){
         
         if (nameButton.isSelected()) {
            JPanel namedPanel = new JPanel();
@@ -230,7 +231,7 @@ public class Gui extends JFrame {
           controlit = false;
         }
       
-      }else{
+      }else if (positionMap.containsKey(newPos)) {
         JOptionPane.showMessageDialog(null, "There is already a place at these coordinates.", "Information",
                                       JOptionPane.INFORMATION_MESSAGE);
       }
@@ -335,7 +336,7 @@ public class Gui extends JFrame {
       
       if (mev.getButton() == MouseEvent.BUTTON1) {
         markedPlace.setMarked(!markedPlace.getMarked());
-        
+            
         if (markedPlace.getMarked() == true) {
           markedPlace.setBorder(new LineBorder(Color.RED));
           markedList.add(markedPlace);
