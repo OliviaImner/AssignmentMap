@@ -32,7 +32,7 @@ public class Gui extends JFrame {
   Map<Position, Place> positionMap = new HashMap<>();
   Collection<Place> markedList = new ArrayList<>();
   Map<String, Collection<Place>> namedMap = new HashMap<>();
-  Map<String, Collection<Place>> catMap = new HashMap<>();
+  Map<String, Collection<Place>> categoryMap = new HashMap<>();
   
   public Gui() {
     super("Assignment 2");
@@ -253,11 +253,11 @@ public class Gui extends JFrame {
       namedMap.get(place.getName()).add(place);
     }
     
-    if (catMap.containsKey(place.getCategory())) {
-      catMap.get(place.getCategory()).add(place);
+    if (categoryMap.containsKey(place.getCategory())) {
+      categoryMap.get(place.getCategory()).add(place);
     } else {
-      catMap.put(place.getCategory(), new ArrayList<>());
-      catMap.get(place.getCategory()).add(place);
+      categoryMap.put(place.getCategory(), new ArrayList<>());
+      categoryMap.get(place.getCategory()).add(place);
     }
   }
   // Hide the categorys on the map
@@ -266,7 +266,7 @@ public class Gui extends JFrame {
     public void actionPerformed(ActionEvent ave) {
       
       if (list.getSelectedValue() != null) {
-        for (Place p : catMap.get(list.getSelectedValue())) {
+        for (Place p : categoryMap.get(list.getSelectedValue())) {
           p.setVisible(false);
           p.setMarked(false);
         }
@@ -307,10 +307,10 @@ public class Gui extends JFrame {
         if (namedMap.get(next.getName()).isEmpty()) {
           namedMap.remove(next.getName());
         }
-        catMap.get(next.getCategory()).remove(next);
+        categoryMap.get(next.getCategory()).remove(next);
         
-        if (catMap.get(next.getCategory()).isEmpty()) {
-          catMap.remove(next.getCategory());
+        if (categoryMap.get(next.getCategory()).isEmpty()) {
+          categoryMap.remove(next.getCategory());
         }
         background.remove(next);
         itr.remove();
