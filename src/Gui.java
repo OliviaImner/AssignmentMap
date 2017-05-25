@@ -81,23 +81,23 @@ public class Gui extends JFrame {
       box.add(DButton);
       add(box);
       
-      nameButton.addActionListener(new NewLis());
-      DButton.addActionListener(new NewLis());
+      nameButton.addActionListener(new NewListener());
+      DButton.addActionListener(new NewListener());
       
       add(searchLabel);
-      searchLabel.addMouseListener(new ClearLis());
+      searchLabel.addMouseListener(new ClearListener());
       add(new JLabel("  "));
       JButton searchButton = new JButton("Search");
       add(searchButton);
-      searchButton.addActionListener(new SearchLis());
+      searchButton.addActionListener(new SearchListener());
       add(new JLabel("  "));
       JButton hide = new JButton("Hide");
       add(hide);
-      hide.addActionListener(new HideLis());
+      hide.addActionListener(new HideListener());
       add(new JLabel("  "));
       JButton remove = new JButton("Remove");
       add(remove);
-      remove.addActionListener(new RemoveLis());
+      remove.addActionListener(new RemoveListener());
       add(new JLabel("  "));
       JButton coordinateButton = new JButton("Coordinates");
       add(coordinateButton);
@@ -277,7 +277,7 @@ public class Gui extends JFrame {
     }
   }
   //hide the place on the map
-  class HideLis implements ActionListener {
+  class HideListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ave) {
       Iterator<Place> itr = markedList.iterator();
@@ -294,7 +294,7 @@ public class Gui extends JFrame {
   }
 
 //remove the marked place.
-  class RemoveLis implements ActionListener {
+  class RemoveListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ave) {
       Iterator<Place> itr = markedList.iterator();
@@ -321,7 +321,7 @@ public class Gui extends JFrame {
     }
   }
   
-  class NewLis implements ActionListener {
+  class NewListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ave) {
       background.addMouseListener(place);
@@ -470,7 +470,7 @@ public class Gui extends JFrame {
     }
   }
   //search for name on the place and it will show the place if it's hidden or not.
-  class SearchLis implements ActionListener {
+  class SearchListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ave) {
       if (!searchLabel.getText().equals("")) {
@@ -575,7 +575,7 @@ public class Gui extends JFrame {
     }
   }
   
-  class ClearLis extends MouseAdapter {
+  class ClearListener extends MouseAdapter {
     @Override
     public void mouseClicked(MouseEvent mev) {
       searchLabel.setText("");
