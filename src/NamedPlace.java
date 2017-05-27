@@ -10,7 +10,7 @@ public class NamedPlace extends Place {
 	@Override
 	void drawRect(Graphics g) {
 		
-		if (folded) {
+		if (fold) {
 			setBounds(pos.getX(), pos.getY(), 30, 30);
 			g.fillPolygon(p);
 		} else {

@@ -1,7 +1,7 @@
 import java.awt.*;
-public class DescPlace extends Place {
+public class DescriptionPlace extends Place {
 	private String description;
-	DescPlace(String name, Position pos, String category, String description) {
+	DescriptionPlace(String name, Position pos, String category, String description) {
 		super(name, pos, category);
 		this.description = description;
 	}
@@ -10,7 +10,7 @@ public class DescPlace extends Place {
 	}
 	@Override
 	void drawRect(Graphics g) {
-		if (folded) {
+		if (fold) {
 			setBounds(pos.getX(), pos.getY(), 30, 30);
 			g.fillPolygon(p);
 		} else {

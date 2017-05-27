@@ -10,12 +10,12 @@ import javax.swing.*;
 public abstract class Place extends JComponent {
 	protected String category;
 	private boolean marked = false;
-	protected boolean folded = true;
+	protected boolean fold = true;
 	protected Position pos;
 	private String name;
-	private int[] x1 = { 0, 15, 30 };
-	private int[] y1 = { 0, 30, 0 };
-	protected Polygon p = new Polygon(x1, y1, 3);
+	private int[] x = { 0, 15, 30 };
+	private int[] y = { 0, 30, 0 };
+	protected Polygon p = new Polygon(x, y, 3);
 	ArrayList<Place> markedList = new ArrayList<>();
 
 	public Place(String name, Position pos, String category) {
@@ -52,7 +52,7 @@ public abstract class Place extends JComponent {
 	}
   public Position getPos(){
   setBounds(pos.getX(), pos.getY(), 30, 30);
-  setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+  setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
   validate();
   repaint();
   return pos;
@@ -64,10 +64,10 @@ public abstract class Place extends JComponent {
 		this.marked = marked;
 		setBorder(null);
 	}
-	public void setFolded(boolean folded) {
-		this.folded = folded;
+	public void setFold(boolean fold) {
+		this.fold = fold;
 	}
-	public boolean getFolded() {
-		return folded;
+	public boolean getFold() {
+		return fold;
 	}
 }
