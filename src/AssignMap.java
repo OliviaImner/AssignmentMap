@@ -25,7 +25,8 @@ public class AssignMap extends JFrame {
   
   private boolean controlit = false;
   private boolean change = false;
-
+  private boolean breakListener = false;
+  
   NewPlace place = new NewPlace();
   //Coordinates cor = new Coordinates();
   
@@ -79,6 +80,7 @@ public class AssignMap extends JFrame {
       add(new JLabel("                  "));
       JButton newButton = new JButton ("New");
       add(newButton);
+      newButton.addActionListener(new NewListener());
     
       group.add(DButton);
       group.add(nameButton);
@@ -87,8 +89,8 @@ public class AssignMap extends JFrame {
       box.add(DButton);
       add(box);
       
-      nameButton.addActionListener(new NewListener());
-      DButton.addActionListener(new NewListener());
+      //nameButton.addActionListener(new NewListener());
+      //DButton.addActionListener(new NewListener());
       
       add(searchLabel);
       searchLabel.addMouseListener(new ClearListener());
@@ -210,39 +212,61 @@ public class AssignMap extends JFrame {
     @Override
     public void mousePressed(MouseEvent e) {
       Place markedPlace = (Place) e.getSource();
+      //JOptionPane.showMessageDialog(null, markedPlace.getLocked());
       
-      if (e.getButton() == MouseEvent.BUTTON1) {
-        markedPlace.setMarked(!markedPlace.getMarked());
+      if (e.getButton() == MouseEvent.BUTTON1 && markedPlace.getLocked() == false) { //add a boolean called locked to Place, if this is TRUE do not allow changes to the selection
+        if(markedPlace.getLocked() == false) {
+          markedPlace.setMarked(!markedPlace.getMarked());
+          //JOptionPane.showMessageDialog(null, "if 1");
+          
+          if (markedPlace.getMarked() == true) {
+            //JOptionPane.showMessageDialog(null, "if 2");
             
-        if (markedPlace.getMarked() == true) {
-          markedPlace.setBorder(new LineBorder(Color.RED));
-          placeMarkedList.add(markedPlace);
-        } else {
-          placeMarkedList.remove(markedPlace);
-          markedPlace.setBorder(null);
+            //select
+            markedPlace.setBorder(new LineBorder(Color.RED));
+            placeMarkedList.add(markedPlace);
+            
+          } else {
+            //JOptionPane.showMessageDialog(null, "if 3");
+            
+            //unselect
+            placeMarkedList.remove(markedPlace);
+            markedPlace.setBorder(null);
+            
+          }
         }
+      } else if(e.getButton() == MouseEvent.BUTTON1  && markedPlace.getLocked() == true) {
+        JOptionPane.showMessageDialog(null, "There is already a place at these coordinates.", "Information", JOptionPane.INFORMATION_MESSAGE);
+        //JOptionPane.showMessageDialog(null, "MouseFocus: " + run);
+        breakListener = true;
       } else if (e.getButton() == MouseEvent.BUTTON3) {
-        
-            for (Place p : positionMap.values()) {
-              if(p.equals(markedPlace)){
-              
-                  if (p instanceof DescriptionPlace) {
+        for (Place p : positionMap.values()) {
+          if(p.equalsPlace(markedPlace)){
+            if (p instanceof DescriptionPlace) {
+              JOptionPane.showMessageDialog(
+                                            null,
+                                            "Name: " + p.getName() +
+                                            "{" + p.getX() +
+                                            "," + p.getY() +
+                                            "}. \n" +
+                                            "Description: " +
+                                            ((DescriptionPlace) p).getDescription(),
+                                            "Place infomation ", JOptionPane.INFORMATION_MESSAGE
+              );
             
-                      JOptionPane.showMessageDialog(null, "Name: " + p.getName() + "{" + p.getX() + "," + p.getY() + "}. \n" +
-                                          "Description: " + ((DescriptionPlace) p).getDescription(), "Place infomation ", JOptionPane.INFORMATION_MESSAGE);
-            
-                  } else if (p instanceof NamedPlace) {
-                    
-                      JOptionPane.showMessageDialog(null, p.getName() + "{" + p.getX() + "," + p.getY() + "}",
-                                                      "Place infomation ", JOptionPane.INFORMATION_MESSAGE);
-            break;
-              }
+            } else if (p instanceof NamedPlace) {
+              JOptionPane.showMessageDialog(null, p.getName() + "{" + p.getX() +
+                                            "," + p.getY() + "}",
+                                            "Place infomation ",
+                                            JOptionPane.INFORMATION_MESSAGE
+              );
             }
           }
         }
       }
     }
-  // Load the plases.txt file to the map
+  }
+  // Load the places.txt file to the map
   public class LoadPlaces implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ave) {
@@ -295,11 +319,28 @@ public class AssignMap extends JFrame {
     @Override
     public void mouseClicked(MouseEvent mev) {
       Place place = null;
-      Position newPos = new Position(mev.getX() - 15, mev.getY() - 30);
       
+      //now check for marked positions and if they overlap with the new position
+      boolean run = true;
+    thisLoop: for (Place name: positionMap.values()){
+        if(name.getMarked()) {
+          Position value = name.getPos();
+          int newX = mev.getX();
+          int newY = mev.getY();
+          int oldX = value.getX();
+          int oldY = value.getY();
+          //JOptionPane.showMessageDialog(null, "newX: " + newX + "newY: " + newY + "\n" + "oldX: " + oldX + "oldY: " + oldY);
+          if (oldX-10 < newX && newX < oldX+10 || oldY-10 < newY && newY < oldY+10) {
+            run = false;
+            //JOptionPane.showMessageDialog(null, run);
+            break thisLoop;
+          }
+        }
+      }
       
-      if(!positionMap.containsKey(newPos)){
-        
+      if(run){
+        Position newPos = new Position(mev.getX() - 15, mev.getY() - 30);
+
         if (nameButton.isSelected()) {
           JPanel namedPanel = new JPanel();
           namedPanel.add(new JLabel("Name: "));
@@ -309,8 +350,8 @@ public class AssignMap extends JFrame {
                                                          JOptionPane.OK_CANCEL_OPTION);
           
           if (nameInput.getText().equals("") && nameDialog == JOptionPane.OK_OPTION) {
-            JOptionPane.showMessageDialog(null, "You haven't typed in correct");
-          }else if (nameDialog == JOptionPane.OK_OPTION && !nameInput.getText().equals("")) {
+            JOptionPane.showMessageDialog(null, "You haven't typed in a valid name");
+          } else if (nameDialog == JOptionPane.OK_OPTION && !nameInput.getText().equals("")) {
             place = new NamedPlace(nameInput.getText(), newPos, theJList.getSelectedValue());
             controlit = true;
           }
@@ -345,9 +386,12 @@ public class AssignMap extends JFrame {
           controlit = false;
         }
         // shows if there's already a place n that position
-      }else if (positionMap.containsKey(newPos)) {
-        JOptionPane.showMessageDialog(null, "There is already a place at these coordinates.", "Information",
-                                      JOptionPane.INFORMATION_MESSAGE);
+      }
+      
+      //unlock all Places
+      for (Position name: positionMap.keySet()){
+        Place value = positionMap.get(name);
+        value.setLocked(false);
       }
       
       map.removeMouseListener(this);
@@ -355,12 +399,24 @@ public class AssignMap extends JFrame {
       
     }
   }
-  
+  //New button
   class NewListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ave) {
-      map.addMouseListener(place);
-      map.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+
+      //first, when the button is clicked change the lock property of all objects to TRUE
+      for (Position name: positionMap.keySet()){
+        Place value = positionMap.get(name);
+        value.setLocked(true);
+      }
+      
+      if(!breakListener) {
+        map.addMouseListener(place);
+        map.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
+        //JOptionPane.showMessageDialog(null, "NewListener after: " + run);
+      } else {
+        breakListener = false;
+      }
     }
   }
   // search after a place with input coordinates and return the place.

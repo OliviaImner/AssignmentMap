@@ -10,6 +10,7 @@ import javax.swing.*;
 public abstract class Place extends JComponent {
 	protected String category;
 	private boolean marked = false;
+  private boolean locked = false;
 	protected boolean fold = true;
 	protected Position pos;
 	private String name;
@@ -51,11 +52,11 @@ public abstract class Place extends JComponent {
 		return category;
 	}
   public Position getPos(){
-  setBounds(pos.getX(), pos.getY(), 30, 30);
-  setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-  validate();
-  repaint();
-  return pos;
+    setBounds(pos.getX(), pos.getY(), 30, 30);
+    setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+    validate();
+    repaint();
+    return pos;
 	}
 	public boolean getMarked() {
 		return marked;
@@ -70,4 +71,19 @@ public abstract class Place extends JComponent {
 	public boolean getFold() {
 		return fold;
 	}
+  public boolean getLocked() {
+    return locked;
+  }
+  public void setLocked(boolean locked) {
+    this.locked = locked;
+  }
+  
+  public boolean equalsPlace(Object other) {
+    
+    if (other instanceof Place) {
+      Place p = (Place) other;
+      return x == p.x && y == p.y;
+    } else
+      return false;
+  }
 }
