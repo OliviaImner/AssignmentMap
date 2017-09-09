@@ -16,7 +16,7 @@ public class AssignMap extends JFrame {
   private JFrame window = new JFrame();
   private Background map;
   
-  private String[] theOptions = { "Buss", "Tunnelbana", "Tåg" };
+  private String[] theOptions = { "Bus", "Underground", "Train" };
   private JTextField searchLabel = new JTextField("Search...");
 
   private JList<String> theJList = new JList<>(theOptions);
@@ -26,9 +26,11 @@ public class AssignMap extends JFrame {
   private boolean controlit = false;
   private boolean change = false;
   private boolean breakListener = false;
+//  File filee = new File("");
+    
+//  private JFileChooser fileChooser = new JFileChooser(".");
   
   NewPlace place = new NewPlace();
-  //Coordinates cor = new Coordinates();
   
   private JRadioButton nameButton = new JRadioButton("Named", true );
   private JRadioButton DButton = new JRadioButton("Described");
@@ -56,6 +58,7 @@ public class AssignMap extends JFrame {
     JMenuItem save = new JMenuItem("Save");
     JMenuItem exit = new JMenuItem("Exit");
     
+    //adding the actionlistener to the archive menu
     menu.add(newMap);
     newMap.addActionListener(new OpenListener());
     menu.add(load);
@@ -88,9 +91,6 @@ public class AssignMap extends JFrame {
       box.add(nameButton);
       box.add(DButton);
       add(box);
-      
-      //nameButton.addActionListener(new NewListener());
-      //DButton.addActionListener(new NewListener());
       
       add(searchLabel);
       searchLabel.addMouseListener(new ClearListener());
@@ -146,11 +146,43 @@ public class AssignMap extends JFrame {
       theJList.addListSelectionListener(listListener);
     }
   }
+    
+//    public void save() {
+//        File saveFile = null;
+//        if (controlit) {
+//            saveFile = filee;
+//        } else {
+//            JFileChooser jfc = new JFileChooser("user.dir");
+//            FileNameExtensionFilter fileName = new FileNameExtensionFilter(
+//                                                                          "Karta", "karta", "krt");
+//            jfc.setFileFilter(fileName);
+//            int answer = jfc.showSaveDialog(this);
+//            if (answer == JFileChooser.APPROVE_OPTION) {
+//                saveFile = jfc.getSelectedFile();
+//                controlit = true;
+//            }
+//        }
+//    }
   // Insert the map
   class OpenListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent eve) {
-      String str = System.getProperty(".");
+    
+//        if (map != null) {
+//            int result = 0;
+//            if (change) {
+//                
+//                result = JOptionPane.showConfirmDialog(null, "Do you want to save your change?",
+//                                                         "Varning", JOptionPane.YES_NO_CANCEL_OPTION);
+//                if (result == JOptionPane.YES_OPTION) {
+//                    save();
+//                } else if (result == JOptionPane.CANCEL_OPTION) {
+//                    return;
+//                }
+//            }
+    
+        
+        String str = System.getProperty(".");
       JFileChooser fileChooser = new JFileChooser(str);
       FileFilter filter = new FileNameExtensionFilter("Pictures", "jpg", "gif", "png");
       fileChooser.setFileFilter(filter);
@@ -168,17 +200,18 @@ public class AssignMap extends JFrame {
       pack();
       validate();
       repaint();
+      }
     }
-  }
-  //This is for putting out the triangel at any place on the map
-  class Background extends JPanel {
+//  }
+  //This is for putting out the triangle at any place on the map
+  public class Background extends JPanel {
     private ImageIcon pic;
     public Background(String fileName) {
       pic = new ImageIcon(fileName);
       setPreferredSize(new Dimension(pic.getIconWidth(), pic.getIconHeight()));
       setLayout(null);
     }
-    // Placing and the size
+    // placement and the size of it
     @Override
     protected void paintComponent(Graphics g) {
       super.paintComponent(g);
@@ -212,22 +245,18 @@ public class AssignMap extends JFrame {
     @Override
     public void mousePressed(MouseEvent e) {
       Place markedPlace = (Place) e.getSource();
-      //JOptionPane.showMessageDialog(null, markedPlace.getLocked());
       
       if (e.getButton() == MouseEvent.BUTTON1 && markedPlace.getLocked() == false) { //add a boolean called locked to Place, if this is TRUE do not allow changes to the selection
         if(markedPlace.getLocked() == false) {
           markedPlace.setMarked(!markedPlace.getMarked());
-          //JOptionPane.showMessageDialog(null, "if 1");
           
           if (markedPlace.getMarked() == true) {
-            //JOptionPane.showMessageDialog(null, "if 2");
             
             //select
             markedPlace.setBorder(new LineBorder(Color.RED));
             placeMarkedList.add(markedPlace);
             
           } else {
-            //JOptionPane.showMessageDialog(null, "if 3");
             
             //unselect
             placeMarkedList.remove(markedPlace);
@@ -237,11 +266,10 @@ public class AssignMap extends JFrame {
         }
       } else if(e.getButton() == MouseEvent.BUTTON1  && markedPlace.getLocked() == true) {
         JOptionPane.showMessageDialog(null, "There is already a place at these coordinates.", "Information", JOptionPane.INFORMATION_MESSAGE);
-        //JOptionPane.showMessageDialog(null, "MouseFocus: " + run);
         breakListener = true;
       } else if (e.getButton() == MouseEvent.BUTTON3) {
         for (Place p : positionMap.values()) {
-          if(p.equalsPlace(markedPlace)){
+          if(p.equals(markedPlace)){
             if (p instanceof DescriptionPlace) {
               JOptionPane.showMessageDialog(
                                             null,
@@ -274,6 +302,7 @@ public class AssignMap extends JFrame {
         Place thePlace = null;
         String str = System.getProperty(".");
         JFileChooser fileChooser = new JFileChooser(str);
+        // What the name of the file can end with
         FileFilter filter = new FileNameExtensionFilter("Places", "places", "txt");
         fileChooser.setFileFilter(filter);
         int theFile = fileChooser.showOpenDialog(AssignMap.this);
@@ -329,10 +358,8 @@ public class AssignMap extends JFrame {
           int newY = mev.getY();
           int oldX = value.getX();
           int oldY = value.getY();
-          //JOptionPane.showMessageDialog(null, "newX: " + newX + "newY: " + newY + "\n" + "oldX: " + oldX + "oldY: " + oldY);
           if (oldX-10 < newX && newX < oldX+10 || oldY-10 < newY && newY < oldY+10) {
             run = false;
-            //JOptionPane.showMessageDialog(null, run);
             break thisLoop;
           }
         }

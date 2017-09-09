@@ -32,11 +32,11 @@ public abstract class Place extends JComponent {
 		super.paintComponent(g);
 		try {
 			
-			if (category.equals("Buss")) {
+			if (category.equals("Bus")) {
 				g.setColor(Color.RED);
-			} else if (category.equals("Tåg")) {
+			} else if (category.equals("Train")) {
 				g.setColor(Color.GREEN);
-			} else if (category.equals("Tunnelbana")) {
+			} else if (category.equals("Underground")) {
 				g.setColor(Color.BLUE);
 			}
 		} catch (NullPointerException e) {
@@ -78,12 +78,4 @@ public abstract class Place extends JComponent {
     this.locked = locked;
   }
   
-  public boolean equalsPlace(Object other) {
-    
-    if (other instanceof Place) {
-      Place p = (Place) other;
-      return x == p.x && y == p.y;
-    } else
-      return false;
-  }
 }

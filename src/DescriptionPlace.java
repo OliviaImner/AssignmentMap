@@ -1,3 +1,4 @@
+
 import java.awt.*;
 public class DescriptionPlace extends Place {
 	private String description;
@@ -18,11 +19,11 @@ public class DescriptionPlace extends Place {
 			g.setColor(Color.WHITE);
 			g.fillRect(0, 0, 80, 50);
 			try {
-				if (category.equals("Buss")) {
+				if (category.equals("Bus")) {
 					g.setColor(Color.RED);
-				} else if (category.equals("Tåg")) {
+				} else if (category.equals("Train")) {
 					g.setColor(Color.GREEN);
-				} else if (category.equals("Tunnelbana")) {
+				} else if (category.equals("Underground")) {
 					g.setColor(Color.BLUE);
 				}
 			} catch (NullPointerException e) {
