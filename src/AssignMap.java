@@ -5,6 +5,7 @@ import javax.swing.event.*;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.*;
 
 import java.util.*;
 import java.util.List;
@@ -147,62 +148,45 @@ public class AssignMap extends JFrame {
     }
   }
     
-//    public void save() {
-//        File saveFile = null;
-//        if (controlit) {
-//            saveFile = filee;
-//        } else {
-//            JFileChooser jfc = new JFileChooser("user.dir");
-//            FileNameExtensionFilter fileName = new FileNameExtensionFilter(
-//                                                                          "Karta", "karta", "krt");
-//            jfc.setFileFilter(fileName);
-//            int answer = jfc.showSaveDialog(this);
-//            if (answer == JFileChooser.APPROVE_OPTION) {
-//                saveFile = jfc.getSelectedFile();
-//                controlit = true;
-//            }
-//        }
-//    }
   // Insert the map
   class OpenListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent eve) {
     
-//        if (map != null) {
-//            int result = 0;
-//            if (change) {
-//                
-//                result = JOptionPane.showConfirmDialog(null, "Do you want to save your change?",
-//                                                         "Varning", JOptionPane.YES_NO_CANCEL_OPTION);
-//                if (result == JOptionPane.YES_OPTION) {
-//                    save();
-//                } else if (result == JOptionPane.CANCEL_OPTION) {
-//                    return;
-//                }
-//            }
+        if(!change){
+            int reply = JOptionPane.showConfirmDialog(null, "You have unsaved places, are you sure you want to load new places?", "Unsaved Data", JOptionPane.YES_NO_OPTION);
+            if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION) {
+                setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+                return;
+            }
+        }
     
-        
         String str = System.getProperty(".");
-      JFileChooser fileChooser = new JFileChooser(str);
-      FileFilter filter = new FileNameExtensionFilter("Pictures", "jpg", "gif", "png");
-      fileChooser.setFileFilter(filter);
-      int theFile = fileChooser.showOpenDialog(AssignMap.this);
-      
-      if (theFile != JFileChooser.APPROVE_OPTION) {
-        return;
-      }
-      File selected = fileChooser.getSelectedFile();
-      String fileName = selected.getAbsolutePath();
-      map = new Background(fileName);
-      scrollBack = new JScrollPane(map);
-      scrollBack.setMaximumSize(new Dimension(map.getWidth(), map.getHeight()));
-      add(scrollBack, BorderLayout.CENTER);
-      pack();
-      validate();
-      repaint();
-      }
-    }
-//  }
+        JFileChooser picAlbum= new JFileChooser(str);
+        FileFilter filter = new FileNameExtensionFilter("Pictures", "jpg", "gif", "png");
+        picAlbum.setFileFilter(filter);
+        int theFile = picAlbum.showOpenDialog(AssignMap.this);
+        
+        if(theFile == JFileChooser.APPROVE_OPTION){
+            placeMarkedList.clear();
+            positionMap.clear();
+            namedMap.clear();
+            categoryMap.clear();
+            File selected = picAlbum.getSelectedFile();
+            String picName = selected.getAbsolutePath();
+            map = new Background(picName);
+            scrollBack = new JScrollPane(map);
+            scrollBack.setMaximumSize(new Dimension(map.getWidth(), map.getHeight()));
+            add(scrollBack, BorderLayout.CENTER);
+            scrollBack.addMouseListener(new MouseFocus());
+            pack();
+            
+            validate();
+            repaint();
+        }
+     }
+  }
+    
   //This is for putting out the triangle at any place on the map
   public class Background extends JPanel {
     private ImageIcon pic;
