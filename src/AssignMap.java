@@ -45,7 +45,7 @@ public class AssignMap extends JFrame {
   
   public AssignMap() {
     super("Assignment 2");
-    addWindowListener(new WindowListener());
+    addWindowListener(new CloseListener());
     setLayout(new BorderLayout());
     add(new North(), BorderLayout.NORTH);
     add(new East(), BorderLayout.EAST);
@@ -70,10 +70,12 @@ public class AssignMap extends JFrame {
     exit.addActionListener(new ExitListener());
     
     setJMenuBar(menuBar);
-    setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+    addWindowListener(new CloseListener());
+
+    //setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
     setSize(1000, 400);
     setLocationRelativeTo(null);
-    window.pack();
+//    window.pack();
     setVisible(true);
   }
   
@@ -153,20 +155,19 @@ public class AssignMap extends JFrame {
     @Override
     public void actionPerformed(ActionEvent eve) {
     
-        if(!change){
-            int reply = JOptionPane.showConfirmDialog(null, "You have unsaved places, are you sure you want to load new places?", "Unsaved Data", JOptionPane.YES_NO_OPTION);
-            if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION) {
+        if(change){
+            int confirm = JOptionPane.showConfirmDialog(null, "You have unsaved places, are you sure you want to load new places?", "Unsaved Data", JOptionPane.YES_NO_OPTION);
+            if (confirm == JOptionPane.NO_OPTION || confirm == JOptionPane.CLOSED_OPTION) {
                 setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
                 return;
             }
         }
-    
+        
         String str = System.getProperty(".");
         JFileChooser picAlbum= new JFileChooser(str);
         FileFilter filter = new FileNameExtensionFilter("Pictures", "jpg", "gif", "png");
         picAlbum.setFileFilter(filter);
         int theFile = picAlbum.showOpenDialog(AssignMap.this);
-        
         if(theFile == JFileChooser.APPROVE_OPTION){
             placeMarkedList.clear();
             positionMap.clear();
@@ -282,51 +283,65 @@ public class AssignMap extends JFrame {
   public class LoadPlaces implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ave) {
-      try {
+      
+        if(change){
+            int reply = JOptionPane.showConfirmDialog(null, "You have unsaved places, are you sure you want to load new places?", "Unsaved Data", JOptionPane.YES_NO_OPTION);
+            if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION) {
+                setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+                return;
+            }
+        }
+        JFileChooser fileChooser = new JFileChooser();
         Place thePlace = null;
-        String str = System.getProperty(".");
-        JFileChooser fileChooser = new JFileChooser(str);
-        // What the name of the file can end with
-        FileFilter filter = new FileNameExtensionFilter("Places", "places", "txt");
-        fileChooser.setFileFilter(filter);
-        int theFile = fileChooser.showOpenDialog(AssignMap.this);
+//        String str = System.getProperty(".");
+//        FileFilter filter = new FileNameExtensionFilter("Places", "places", "txt");
+//        fileChooser.setFileFilter(filter);
+//        int theFile = fileChooser.showOpenDialog(AssignMap.this);
+//        
+        if (fileChooser.showOpenDialog(null)==JFileChooser.APPROVE_OPTION){
+            placeMarkedList.clear();
+            positionMap.clear();
+            namedMap.clear();
+            categoryMap.clear();
+            File selected = fileChooser.getSelectedFile();
         
-        if (theFile != JFileChooser.APPROVE_OPTION) {
-            return;
-        }
-        File selected = fileChooser.getSelectedFile();
-        FileReader reader = new FileReader(selected.getAbsolutePath());
-        BufferedReader br = new BufferedReader(reader);
-        String line;
+            try {
+
         
-        while ((line = br.readLine()) != null) {
-            String[] tokens = line.split(",");
-            String category = tokens[1];
-            int x = Integer.parseInt(tokens[2]);
-            int y = Integer.parseInt(tokens[3]);
-            String name = tokens[4];
+                FileReader reader = new FileReader(selected.getAbsolutePath());
+                BufferedReader br = new BufferedReader(reader);
+                String line;
+        
+                while ((line = br.readLine()) != null) {
+                    String[] tokens = line.split(",");
+                    String category = tokens[1];
+                    int x = Integer.parseInt(tokens[2]);
+                    int y = Integer.parseInt(tokens[3]);
+                    String name = tokens[4];
           
-          if (tokens[0].equals("Named")) {
-                thePlace = new NamedPlace(name, new Position(x, y), category);
+                    if (tokens[0].equals("Named")) {
+                        thePlace = new NamedPlace(name, new Position(x, y), category);
               
-              }else if (tokens[0].equals("Described")) {
-                  String description = tokens[5];
-                    thePlace = new DescriptionPlace(name, new Position(x, y), category, description);
-          }
-          addingToMap(thePlace);
+                    }else if (tokens[0].equals("Described")) {
+                        String description = tokens[5];
+                        thePlace = new DescriptionPlace(name, new Position(x, y), category, description);
+                    }
+                    addingToMap(thePlace);
+                    thePlace.addMouseListener(new MouseFocus());
+
+                }
+                validate();
+                repaint();
+                br.close();
+                reader.close();
+                } catch (FileNotFoundException e) {
+                    JOptionPane.showMessageDialog(null, "Can't open file");
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(null, "Error :" + e.getMessage());
+                }
         }
-        validate();
-        repaint();
-        br.close();
-        reader.close();
-      } catch (FileNotFoundException e) {
-        JOptionPane.showMessageDialog(null, "Can't open file");
-      } catch (IOException e) {
-        JOptionPane.showMessageDialog(null, "Error :" + e.getMessage());
-      }
     }
-  }
-  
+}
   // Creates a new place if there's a named place or a described place
   class NewPlace extends MouseAdapter {
     @Override
@@ -459,13 +474,18 @@ public class AssignMap extends JFrame {
             Position theCoordinates = new Position(coorX, coorY);
             
             if(positionMap.containsKey(theCoordinates)){
-              Iterator<Place> itr = placeMarkedList.iterator();
+//                ArrayList<Place> placeCord = placeMarkedList.();
+//              Iterator<Place> itr = placeMarkedList.iterator();
               
-              while (itr.hasNext()) {
-                Place p = itr.next();
-                p.setMarked(false);
-                itr.remove();
-              }
+                for(Place p : placeMarkedList){
+                    p.setMarked(false);
+                }
+                
+//                while (itr.hasNext()) {
+//                Place p = itr.next();
+//                p.setMarked(false);
+//                itr.remove();
+//              }
               placeMarkedList.clear();
               Place pp = positionMap.get(theCoordinates);
               pp.setVisible(true);
@@ -610,31 +630,46 @@ public class AssignMap extends JFrame {
     }
   }
   //Exit dialog
-  public void exitFrame() {
-    if (change == true) {
-      int confirm = JOptionPane.showOptionDialog(window, "You have unsaved changes, do you want to quit anaway?",
-                                                                    "Exit Confirmation", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, null, null);
-      if (confirm == JOptionPane.YES_OPTION) {
-        System.exit(0);
-      }
-    } else {
-      System.exit(0);
+    class CloseListener extends WindowAdapter {
+        @Override
+        public void windowClosing(WindowEvent e) {
+            if(change){
+                int confirm = JOptionPane.showConfirmDialog(null, "You have unsaved places, are you sure you want to quit?", "Unsaved Data", JOptionPane.YES_NO_OPTION);
+                if (confirm == JOptionPane.NO_OPTION || confirm == JOptionPane.CLOSED_OPTION) {
+                    setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+                }
+                else if (confirm == JOptionPane.YES_OPTION){
+                    System.exit(0);
+                }
+            }
+            else {
+                System.exit(0);
+            }
+        }
     }
-  }
-  
-  class WindowListener extends WindowAdapter {
-    
-    @Override
-    public void windowClosing(WindowEvent e) {
-      exitFrame();
-    }
-  }
+//    class CloseListener extends WindowAdapter {
+//        @Override
+//        public void windowClosing(WindowEvent e) {
+//            if (change) {
+//                int confirm = JOptionPane.showConfirmDialog(window, "You have unsaved changes, do you want to quit anaway?",
+//                                                                    "Unsaved Data", JOptionPane.YES_NO_OPTION);
+//                if (confirm == JOptionPane.NO_OPTION || confirm == JOptionPane.CLOSED_OPTION) {
+//                    setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+//                }
+//                else if(confirm == JOptionPane.YES_OPTION){
+//                    System.exit(0);
+//                }
+//            }else {
+//                System.exit(0);
+//            }
+//      }
+//  }
   
   class ExitListener implements ActionListener {
     
     @Override
     public void actionPerformed(ActionEvent ave) {
-      exitFrame();
+        System.exit(0);
     }
   }
   
