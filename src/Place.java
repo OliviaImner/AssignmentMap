@@ -65,6 +65,11 @@ public abstract class Place extends JComponent {
 		this.marked = marked;
 		setBorder(null);
 	}
+    
+    public void setMarked(){
+        marked = !marked;
+        repaint();
+    }
 	public void setFold(boolean fold) {
 		this.fold = fold;
 	}
@@ -77,5 +82,4 @@ public abstract class Place extends JComponent {
   public void setLocked(boolean locked) {
     this.locked = locked;
   }
-  
 }

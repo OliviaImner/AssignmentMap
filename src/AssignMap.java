@@ -27,9 +27,6 @@ public class AssignMap extends JFrame {
   private boolean controlit = false;
   private boolean change = false;
   private boolean breakListener = false;
-//  File filee = new File("");
-    
-//  private JFileChooser fileChooser = new JFileChooser(".");
   
   NewPlace place = new NewPlace();
   
@@ -37,8 +34,8 @@ public class AssignMap extends JFrame {
   private JRadioButton DButton = new JRadioButton("Described");
   ButtonGroup group = new ButtonGroup();
   
-  Map<String, Collection<Place>> namedMap = new HashMap<>();
-  Map<String, Collection<Place>> categoryMap = new HashMap<>();
+  Map<String, ArrayList<Place>> namedMap = new HashMap<>();
+  Map<String, ArrayList<Place>> categoryMap = new HashMap<>();
   Map<Position, Place> positionMap = new HashMap<>();
   Collection<Place> placeMarkedList = new ArrayList<>();
   
@@ -293,11 +290,7 @@ public class AssignMap extends JFrame {
         }
         JFileChooser fileChooser = new JFileChooser();
         Place thePlace = null;
-//        String str = System.getProperty(".");
-//        FileFilter filter = new FileNameExtensionFilter("Places", "places", "txt");
-//        fileChooser.setFileFilter(filter);
-//        int theFile = fileChooser.showOpenDialog(AssignMap.this);
-//        
+    
         if (fileChooser.showOpenDialog(null)==JFileChooser.APPROVE_OPTION){
             placeMarkedList.clear();
             positionMap.clear();
@@ -327,9 +320,9 @@ public class AssignMap extends JFrame {
                         thePlace = new DescriptionPlace(name, new Position(x, y), category, description);
                     }
                     addingToMap(thePlace);
-                    thePlace.addMouseListener(new MouseFocus());
 
                 }
+                thePlace.addMouseListener(new MouseFocus());
                 validate();
                 repaint();
                 br.close();
@@ -474,18 +467,11 @@ public class AssignMap extends JFrame {
             Position theCoordinates = new Position(coorX, coorY);
             
             if(positionMap.containsKey(theCoordinates)){
-//                ArrayList<Place> placeCord = placeMarkedList.();
-//              Iterator<Place> itr = placeMarkedList.iterator();
               
                 for(Place p : placeMarkedList){
                     p.setMarked(false);
                 }
                 
-//                while (itr.hasNext()) {
-//                Place p = itr.next();
-//                p.setMarked(false);
-//                itr.remove();
-//              }
               placeMarkedList.clear();
               Place pp = positionMap.get(theCoordinates);
               pp.setVisible(true);
@@ -514,54 +500,121 @@ public class AssignMap extends JFrame {
   class SearchListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ave) {
-      if (!searchLabel.getText().equals("")) {
         
-        String name = searchLabel.getText();
-        Iterator<Place> itr = placeMarkedList.iterator();
-        while (itr.hasNext()) {
-          Place p = (Place) itr.next();
-          p.setBorder(null);
+        for(Place p: placeMarkedList){
+            p.setMarked();
+            p.setBorder(null);
         }
         placeMarkedList.clear();
-        if (namedMap.get(name) != null) {
-          for (Place p : namedMap.get(name)) {
-            
-            p.setVisible(true);
-            p.setBorder(new LineBorder(Color.RED));
-            placeMarkedList.add(p);
-          }
+        
+        String text = searchLabel.getText();
+        if(!text.equals("")){
+            ArrayList <Place> temp = namedMap.get(text);
+            if(temp!=null){
+                for (Place p : temp){
+                    p.setVisible(true);
+                    p.setBorder(new LineBorder(Color.RED));
+                    placeMarkedList.add(p);                }
+            }
         }
-      }
+        else{
+            JOptionPane.showMessageDialog(null, "Nothing filled in search field");
+        }
     }
   }
+//      if (!searchLabel.getText().equals("")) {
+//        
+//        String name = searchLabel.getText();
+//        Iterator<Place> itr = placeMarkedList.iterator();
+//        while (itr.hasNext()) {
+//          Place p = (Place) itr.next();
+//          p.setBorder(null);
+//        }
+//        placeMarkedList.clear();
+//        if (namedMap.get(name) != null) {
+//          for (Place p : namedMap.get(name)) {
+//            
+//            p.setVisible(true);
+//            p.setBorder(new LineBorder(Color.RED));
+//            placeMarkedList.add(p);
+//          }
+//        }
+//      }
+//    }
+//  }
   
   //remove the marked place.
   class RemoveListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ave) {
-      Iterator<Place> itr = placeMarkedList.iterator();
-      
-      while (itr.hasNext()) {
-        Place next = (Place) itr.next();
-        positionMap.remove(next.getPos());
-        namedMap.get(next.getName()).remove(next);
         
-        if (namedMap.get(next.getName()).isEmpty()) {
-          namedMap.remove(next.getName());
+        for(Place p: placeMarkedList){
+            if(positionMap.containsValue(p)){
+                Position pos = new Position(p.getX(), p.getY());
+                positionMap.remove(pos);
+            }
+            if (namedMap.containsKey(p.getName())){
+                ArrayList<Place> temp = namedMap.get(p.getName());
+                if(temp!=null){
+                    Place premove = null;
+                    for (Place pl: temp){
+                        if(p.equals(pl)){
+                            premove = pl;
+                            
+                        }
+                    }
+                    if(premove != null){
+                        temp.remove(premove);
+                        namedMap.put(p.getName(), temp);
+                    }
+                }
+                
+            }
+            if(categoryMap.containsKey(p.getCategory())){
+                ArrayList<Place> temp = categoryMap.get(p.getCategory());
+                if(temp!=null){
+                    Place premove = null;
+                    for (Place pl: temp){
+                        if(p.equals(pl)){
+                            premove = pl;
+                        }
+                    }
+                    if(premove != null){
+                        temp.remove(premove);
+                        categoryMap.put(p.getCategory(), temp);
+                    }
+                }
+            }
+            map.remove(p);
         }
-        categoryMap.get(next.getCategory()).remove(next);
         
-        if (categoryMap.get(next.getCategory()).isEmpty()) {
-          categoryMap.remove(next.getCategory());
-        }
-        map.remove(next);
-        itr.remove();
-      }
-      change = true;
-      repaint();
-      placeMarkedList.clear();
+        placeMarkedList.clear();
+        repaint();
     }
   }
+//      Iterator<Place> itr = placeMarkedList.iterator();
+//      
+//      while (itr.hasNext()) {
+//        Place next = (Place) itr.next();
+//        positionMap.remove(next.getPos());
+//        namedMap.get(next.getName()).remove(next);
+//        
+//        if (namedMap.get(next.getName()).isEmpty()) {
+//          namedMap.remove(next.getName());
+//        }
+//        categoryMap.get(next.getCategory()).remove(next);
+//        
+//        if (categoryMap.get(next.getCategory()).isEmpty()) {
+//          categoryMap.remove(next.getCategory());
+//        }
+//        map.remove(next);
+//        itr.remove();
+//      }
+//      change = true;
+//      repaint();
+//      placeMarkedList.clear();
+//    }
+//  }
   
   // Hide the categorys on the map
   class HideCategoryListener implements ActionListener {
