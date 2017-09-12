@@ -339,6 +339,7 @@ public class AssignMap extends JFrame {
       
       //now check for marked positions and if they overlap with the new position
       boolean run = true;
+    
     thisLoop: for (Place name: positionMap.values()){
         if(name.getMarked()) {
           Position value = name.getPos();
