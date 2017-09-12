@@ -250,29 +250,25 @@ public class AssignMap extends JFrame {
         JOptionPane.showMessageDialog(null, "There is already a place at these coordinates.", "Information", JOptionPane.INFORMATION_MESSAGE);
         breakListener = true;
       } else if (e.getButton() == MouseEvent.BUTTON3) {
-        for (Place p : positionMap.values()) {
-          if(p.equals(markedPlace)){
-            if (p instanceof DescriptionPlace) {
+
+            if (markedPlace instanceof DescriptionPlace) {
               JOptionPane.showMessageDialog(
                                             null,
-                                            "Name: " + p.getName() +
-                                            "{" + p.getX() +
-                                            "," + p.getY() +
+                                            "Name: " + markedPlace.getName() +
+                                            "{" + markedPlace.getX() +
+                                            "," + markedPlace.getY() +
                                             "}. \n" +
                                             "Description: " +
-                                            ((DescriptionPlace) p).getDescription(),
+                                            ((DescriptionPlace) markedPlace).getDescription(),
                                             "Place infomation ", JOptionPane.INFORMATION_MESSAGE
               );
             
-            } else if (p instanceof NamedPlace) {
-              JOptionPane.showMessageDialog(null, p.getName() + "{" + p.getX() +
-                                            "," + p.getY() + "}",
+            } else if (markedPlace instanceof NamedPlace) {
+              JOptionPane.showMessageDialog(null, markedPlace.getName() + "{" + markedPlace.getX() +
+                                            "," + markedPlace.getY() + "}",
                                             "Place infomation ",
-                                            JOptionPane.INFORMATION_MESSAGE
-              );
+                                            JOptionPane.INFORMATION_MESSAGE);
             }
-          }
-        }
       }
     }
   }
