@@ -164,12 +164,7 @@ public class AssignMap extends JFrame {
         picAlbum.addChoosableFileFilter(filter);
         int state = picAlbum.showOpenDialog(getParent());
         if(state == JFileChooser.APPROVE_OPTION){
-//        String str = System.getProperty(".");
-//        JFileChooser picAlbum= new JFileChooser(str);
-//        FileFilter filter = new FileNameExtensionFilter("Pictures", "jpg", "gif", "png");
-//        picAlbum.setFileFilter(filter);
-//        int theFile = picAlbum.showOpenDialog(AssignMap.this);
-//        if(theFile == JFileChooser.APPROVE_OPTION){
+
             remove(map);
             placeMarkedList.clear();
             positionMap.clear();
@@ -186,15 +181,6 @@ public class AssignMap extends JFrame {
             
             scrollBack.addMouseListener(new MouseFocus());
             System.out.println(picName);
-            
-//            File selected = picAlbum.getSelectedFile();
-//            String picName = selected.getAbsolutePath();
-//            map = new Background(picName);
-//            scrollBack = new JScrollPane(map);
-//            scrollBack.setMaximumSize(new Dimension(map.getWidth(), map.getHeight()));
-//            add(scrollBack, BorderLayout.CENTER);
-//            scrollBack.addMouseListener(new MouseFocus());
-//            pack();
             
             validate();
             repaint();
@@ -294,11 +280,11 @@ public class AssignMap extends JFrame {
     @Override
     public void actionPerformed(ActionEvent ave) {
       
-        if(change){
+        if(!change){
             int reply = JOptionPane.showConfirmDialog(null, "You have unsaved places, are you sure you want to load new places?", "Unsaved Data", JOptionPane.YES_NO_OPTION);
             if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION) {
                 setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-                return;
+                
             }
         }
         JFileChooser fileChooser = new JFileChooser();
@@ -310,7 +296,7 @@ public class AssignMap extends JFrame {
             namedMap.clear();
             categoryMap.clear();
             File selected = fileChooser.getSelectedFile();
-        
+            
             try {
 
         
@@ -332,7 +318,11 @@ public class AssignMap extends JFrame {
                         String description = tokens[5];
                         thePlace = new DescriptionPlace(name, new Position(x, y), category, description);
                     }
+                    
                     addingToMap(thePlace);
+                    System.out.println(thePlace);
+                    validate();
+                    repaint();
 
                 }
                 thePlace.addMouseListener(new MouseFocus());
