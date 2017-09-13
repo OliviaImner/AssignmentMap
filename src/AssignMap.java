@@ -15,7 +15,7 @@ import java.io.*;
 
 public class AssignMap extends JFrame {
   private JFrame window = new JFrame();
-  private Background map;
+  private Background map = new Background();
   
   private String[] theOptions = { "Bus", "Underground", "Train" };
   private JTextField searchLabel = new JTextField("Search...");
@@ -159,25 +159,42 @@ public class AssignMap extends JFrame {
                 return;
             }
         }
-        
-        String str = System.getProperty(".");
-        JFileChooser picAlbum= new JFileChooser(str);
-        FileFilter filter = new FileNameExtensionFilter("Pictures", "jpg", "gif", "png");
-        picAlbum.setFileFilter(filter);
-        int theFile = picAlbum.showOpenDialog(AssignMap.this);
-        if(theFile == JFileChooser.APPROVE_OPTION){
+        JFileChooser picAlbum = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("Bilder","jpg","gif","png");
+        picAlbum.addChoosableFileFilter(filter);
+        int state = picAlbum.showOpenDialog(getParent());
+        if(state == JFileChooser.APPROVE_OPTION){
+//        String str = System.getProperty(".");
+//        JFileChooser picAlbum= new JFileChooser(str);
+//        FileFilter filter = new FileNameExtensionFilter("Pictures", "jpg", "gif", "png");
+//        picAlbum.setFileFilter(filter);
+//        int theFile = picAlbum.showOpenDialog(AssignMap.this);
+//        if(theFile == JFileChooser.APPROVE_OPTION){
+            remove(map);
             placeMarkedList.clear();
             positionMap.clear();
             namedMap.clear();
             categoryMap.clear();
+            
             File selected = picAlbum.getSelectedFile();
             String picName = selected.getAbsolutePath();
-            map = new Background(picName);
+            map = new Background();
             scrollBack = new JScrollPane(map);
             scrollBack.setMaximumSize(new Dimension(map.getWidth(), map.getHeight()));
+            map.setBackground(picName);
             add(scrollBack, BorderLayout.CENTER);
+            
             scrollBack.addMouseListener(new MouseFocus());
-            pack();
+            System.out.println(picName);
+            
+//            File selected = picAlbum.getSelectedFile();
+//            String picName = selected.getAbsolutePath();
+//            map = new Background(picName);
+//            scrollBack = new JScrollPane(map);
+//            scrollBack.setMaximumSize(new Dimension(map.getWidth(), map.getHeight()));
+//            add(scrollBack, BorderLayout.CENTER);
+//            scrollBack.addMouseListener(new MouseFocus());
+//            pack();
             
             validate();
             repaint();
@@ -185,21 +202,21 @@ public class AssignMap extends JFrame {
      }
   }
     
-  //This is for putting out the triangle at any place on the map
-  public class Background extends JPanel {
-    private ImageIcon pic;
-    public Background(String fileName) {
-      pic = new ImageIcon(fileName);
-      setPreferredSize(new Dimension(pic.getIconWidth(), pic.getIconHeight()));
-      setLayout(null);
-    }
-    // placement and the size of it
-    @Override
-    protected void paintComponent(Graphics g) {
-      super.paintComponent(g);
-      g.drawImage(pic.getImage(), 0, 0, pic.getIconWidth(), pic.getIconHeight(), this);
-    }
-  }
+//  //This is for putting out the triangle at any place on the map
+//  public class Background extends JPanel {
+//    private ImageIcon pic;
+//    public Background(String fileName) {
+//      pic = new ImageIcon(fileName);
+//      setPreferredSize(new Dimension(pic.getIconWidth(), pic.getIconHeight()));
+//      setLayout(null);
+//    }
+//    // placement and the size of it
+//    @Override
+//    protected void paintComponent(Graphics g) {
+//      super.paintComponent(g);
+//      g.drawImage(pic.getImage(), 0, 0, pic.getIconWidth(), pic.getIconHeight(), this);
+//    }
+//  }
   
   // add new place to the Maps 
   public void addingToMap(Place place) {
