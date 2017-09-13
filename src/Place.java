@@ -14,8 +14,8 @@ public abstract class Place extends JComponent {
 	protected boolean fold = true;
 	protected Position pos;
 	private String name;
-	private int[] x = { 0, 15, 30 };
-	private int[] y = { 0, 30, 0 };
+	private int[] x = { 0, 10, 20 };
+	private int[] y = { 0, 20, 0 };
 	protected Polygon p = new Polygon(x, y, 3);
 	ArrayList<Place> markedList = new ArrayList<>();
 
@@ -52,7 +52,7 @@ public abstract class Place extends JComponent {
 		return category;
 	}
   public Position getPos(){
-    setBounds(pos.getX(), pos.getY(), 30, 30);
+    setBounds(pos.getX(), pos.getY(), 20, 20);
     setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     validate();
     repaint();
