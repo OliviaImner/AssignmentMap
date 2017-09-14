@@ -290,7 +290,7 @@ public class AssignMap extends JFrame {
         
         JFileChooser fileChooser = new JFileChooser();
         Place thePlace = null;
-    
+        change = true;
         if (fileChooser.showOpenDialog(null)==JFileChooser.APPROVE_OPTION){
             map.removeAll();
             placeMarkedList.clear();
