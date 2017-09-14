@@ -345,9 +345,33 @@ public class AssignMap extends JFrame {
     @Override
     public void mouseClicked(MouseEvent mev) {
       Place place = null;
-      
+        int xKordinat = mev.getX();
+        int yKordinat = mev.getY();
+        Position pos = new Position (xKordinat, yKordinat);
+        
+        
+         //  int reply = JOptionPane.showConfirmDialog(null, "There is already a place at these coordinates.", "Information", JOptionPane.INFORMATION_MESSAGE);
+        
+        if(!controlit){
+            for(int z=yKordinat-10; z<yKordinat+10; z++){
+                for(int i = xKordinat-10; i<xKordinat+10; i++){
+                    Position po = new Position(i,z);
+                    if(positionMap.containsKey(po)){
+                        Place p = positionMap.get(po);
+                        p.setMarked(false);
+                        validate();
+                        repaint();
+                    }
+                    
+                }
+            }
+            controlit = false;
+        }
+        
       //now check for marked positions and if they overlap with the new position
-      boolean run = true;
+      
+                        
+    /*   boolean run = true;
     thisLoop: for (Place name: positionMap.values()){
         if(name.getMarked()) {
           Position value = name.getPos();
@@ -360,9 +384,9 @@ public class AssignMap extends JFrame {
             break thisLoop;
           }
         }
-      }
+      }*/
       
-      if(run){
+      if(!controlit){
         Position newPos = new Position(mev.getX() - 15, mev.getY() - 30);
 
         if (nameButton.isSelected()) {
@@ -413,10 +437,10 @@ public class AssignMap extends JFrame {
       }
       
       //unlock all Places
-      for (Position name: positionMap.keySet()){
-        Place value = positionMap.get(name);
-        value.setLocked(false);
-      }
+    //  for (Position name: positionMap.keySet()){
+   //     Place value = positionMap.get(name);
+    //    value.setLocked(false);
+      //}
       
       map.removeMouseListener(this);
       map.setCursor(Cursor.getDefaultCursor());
