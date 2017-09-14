@@ -279,18 +279,20 @@ public class AssignMap extends JFrame {
   public class LoadPlaces implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ave) {
-      
-        if(!change){
+      //ta reda på var change sätt true
+        if(change){
             int reply = JOptionPane.showConfirmDialog(null, "You have unsaved places, are you sure you want to load new places?", "Unsaved Data", JOptionPane.YES_NO_OPTION);
             if (reply == JOptionPane.NO_OPTION || reply == JOptionPane.CLOSED_OPTION) {
                 setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-                
+                return;
             }
         }
+        
         JFileChooser fileChooser = new JFileChooser();
         Place thePlace = null;
     
         if (fileChooser.showOpenDialog(null)==JFileChooser.APPROVE_OPTION){
+            map.removeAll();
             placeMarkedList.clear();
             positionMap.clear();
             namedMap.clear();
