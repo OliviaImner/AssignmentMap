@@ -12,10 +12,10 @@ public class NamedPlace extends Place {
 	void drawRect(Graphics g) {
 		
 		if (fold) {
-			setBounds(pos.getX(), pos.getY(), 30, 30);
+			setBounds(pos.getX() -15, pos.getY() - 30, 30, 30);
 			g.fillPolygon(p);
 		} else {
-			setBounds(pos.getX(), pos.getY(), 60, 30);
+			setBounds(pos.getX() -15, pos.getY() - 30, 60, 30);
 			g.setFont(new Font("Arial", Font.BOLD, 16));
 			g.drawString(getName(), 0, 15);
 		}

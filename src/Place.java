@@ -22,7 +22,9 @@ public abstract class Place extends JComponent {
 	public Place(String name, Position pos, String category) {
 		this.name = name;
 		this.category = category;
-		this.pos = pos;
+        this.pos = pos;
+        setBounds(pos.getX() - 15, pos.getY() - 30, 30, 30);
+
 	}
 
 	abstract void drawRect(Graphics g);
@@ -52,7 +54,7 @@ public abstract class Place extends JComponent {
 		return category;
 	}
   public Position getPos(){
-    setBounds(pos.getX(), pos.getY(), 30, 30);
+    setBounds(pos.getX() - 15, pos.getY() - 30, 30, 30);
     setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     validate();
     repaint();

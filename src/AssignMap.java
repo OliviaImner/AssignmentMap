@@ -387,7 +387,7 @@ public class AssignMap extends JFrame {
       }*/
       
       if(!controlit){
-        Position newPos = new Position(mev.getX() - 15, mev.getY() - 30);
+        Position newPos = new Position(mev.getX(), mev.getY());
 
         if (nameButton.isSelected()) {
           JPanel namedPanel = new JPanel();

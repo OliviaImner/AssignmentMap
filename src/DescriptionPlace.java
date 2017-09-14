@@ -12,10 +12,10 @@ public class DescriptionPlace extends Place {
 	@Override
 	void drawRect(Graphics g) {
 		if (fold) {
-			setBounds(pos.getX(), pos.getY(), 30, 30);
+			setBounds(pos.getX() -15, pos.getY() -30, 30, 30);
 			g.fillPolygon(p);
 		} else {
-			setBounds(pos.getX(), pos.getY(), 80, 40);
+			setBounds(pos.getX() -15, pos.getY() -30, 80, 40);
 			g.setColor(Color.WHITE);
 			g.fillRect(0, 0, 80, 50);
 			try {
