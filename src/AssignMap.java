@@ -14,7 +14,7 @@ import java.awt.event.*;
 import java.io.*;
 
 public class AssignMap extends JFrame {
-  private JFrame window = new JFrame();
+ // private JFrame window = new JFrame();
   private Background map = new Background();
   
   private String[] theOptions = { "Bus", "Underground", "Train" };
@@ -22,7 +22,7 @@ public class AssignMap extends JFrame {
 
   private JList<String> theJList = new JList<>(theOptions);
   private JScrollPane toScroll = new JScrollPane(theJList);
-  private JScrollPane scrollBack = new JScrollPane();
+  private JScrollPane scrollBack = new JScrollPane(map);
   
   private boolean controlit = false;
   private boolean change = false;
@@ -153,12 +153,13 @@ public class AssignMap extends JFrame {
     public void actionPerformed(ActionEvent eve) {
     
         if(change){
-            int confirm = JOptionPane.showConfirmDialog(null, "You have unsaved places, are you sure you want to load new places?", "Unsaved Data", JOptionPane.YES_NO_OPTION);
+            int confirm = JOptionPane.showConfirmDialog(null, "You have unsaved places, are you sure you want to load new map?", "Unsaved Data", JOptionPane.YES_NO_OPTION);
             if (confirm == JOptionPane.NO_OPTION || confirm == JOptionPane.CLOSED_OPTION) {
                 setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
                 return;
             }
         }
+        change = true;
         JFileChooser picAlbum = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter("Bilder","jpg","gif","png");
         picAlbum.addChoosableFileFilter(filter);
@@ -173,12 +174,8 @@ public class AssignMap extends JFrame {
             
             File selected = picAlbum.getSelectedFile();
             String picName = selected.getAbsolutePath();
-            map = new Background();
-            scrollBack = new JScrollPane(map);
-            scrollBack.setMaximumSize(new Dimension(map.getWidth(), map.getHeight()));
             map.setBackground(picName);
             add(scrollBack, BorderLayout.CENTER);
-            
             scrollBack.addMouseListener(new MouseFocus());
             System.out.println(picName);
             
