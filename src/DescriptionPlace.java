@@ -9,7 +9,20 @@ public class DescriptionPlace extends Place {
 	public String getDescription() {
 		return description;
 	}
-	@Override
+    //void drawRect(Graphics g){
+        
+    //}
+  /*  @Override
+    void drawRect(Graphics g) {
+    if(fold){
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, 80, 50);
+        g.fillPolygon(p);
+        g.drawString(getDescription(), 0, 35);
+        
+        }
+    }
+/*	@Override
 	void drawRect(Graphics g) {
 		if (fold) {
 			setBounds(pos.getX() -15, pos.getY() -30, 30, 30);
@@ -33,5 +46,5 @@ public class DescriptionPlace extends Place {
 			g.drawString(getName(), 0, 15);
 			g.drawString(getDescription(), 0, 35);
 		}
-	}
+	} */
 }

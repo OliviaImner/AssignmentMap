@@ -387,7 +387,7 @@ public class AssignMap extends JFrame {
       }*/
       
       if(!controlit){
-        Position newPos = new Position(mev.getX(), mev.getY());
+        Position newPos = new Position(mev.getX() , mev.getY() );
 
         if (nameButton.isSelected()) {
           JPanel namedPanel = new JPanel();
@@ -432,6 +432,7 @@ public class AssignMap extends JFrame {
           map.validate();
           map.repaint();
           controlit = false;
+          theJList.clearSelection();
         }
         // shows if there's already a place n that position
       }
@@ -440,11 +441,10 @@ public class AssignMap extends JFrame {
     //  for (Position name: positionMap.keySet()){
    //     Place value = positionMap.get(name);
     //    value.setLocked(false);
-      //}
+     // }
       
       map.removeMouseListener(this);
       map.setCursor(Cursor.getDefaultCursor());
-      
     }
   }
   //New button

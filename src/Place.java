@@ -26,8 +26,33 @@ public abstract class Place extends JComponent {
         setBounds(pos.getX() - 15, pos.getY() - 30, 30, 30);
 
 	}
+    
+    void drawRect(Graphics g){
+        g.fillPolygon(p);
+    }
+    
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        
+        try {
+            if (category.equals("Bus")) {
+                g.setColor(Color.RED);
+            } else if (category.equals("Train")) {
+                g.setColor(Color.GREEN);
+            } else if (category.equals("Underground")) {
+                g.setColor(Color.BLUE);
+            }
+        }catch (NullPointerException e) {
+                g.setColor(Color.BLACK);
+        }
+        drawRect(g);
+    }
+    
+    
 
-	abstract void drawRect(Graphics g);
+
+	/*abstract void drawRect(Graphics g);
 
 	@Override
 	protected void paintComponent(Graphics g) {
@@ -45,7 +70,7 @@ public abstract class Place extends JComponent {
 			g.setColor(Color.BLACK);
 		}
 		drawRect(g);
-	}
+	} */
 
 	public String getName() {
 		return name;
