@@ -48,29 +48,6 @@ public abstract class Place extends JComponent {
         }
         drawRect(g);
     }
-    
-    
-
-
-	/*abstract void drawRect(Graphics g);
-
-	@Override
-	protected void paintComponent(Graphics g) {
-		super.paintComponent(g);
-		try {
-			
-			if (category.equals("Bus")) {
-				g.setColor(Color.RED);
-			} else if (category.equals("Train")) {
-				g.setColor(Color.GREEN);
-			} else if (category.equals("Underground")) {
-				g.setColor(Color.BLUE);
-			}
-		} catch (NullPointerException e) {
-			g.setColor(Color.BLACK);
-		}
-		drawRect(g);
-	} */
 
 	public String getName() {
 		return name;

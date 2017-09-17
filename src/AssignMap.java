@@ -13,8 +13,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 
-public class AssignMap extends JFrame {
- // private JFrame window = new JFrame();
+  public class AssignMap extends JFrame {
   private Background map = new Background();
   
   private String[] theOptions = { "Bus", "Underground", "Train" };
@@ -69,10 +68,8 @@ public class AssignMap extends JFrame {
     setJMenuBar(menuBar);
     addWindowListener(new CloseListener());
 
-    //setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
     setSize(1000, 400);
     setLocationRelativeTo(null);
-//    window.pack();
     setVisible(true);
   }
   
@@ -184,22 +181,6 @@ public class AssignMap extends JFrame {
         }
      }
   }
-    
-//  //This is for putting out the triangle at any place on the map
-//  public class Background extends JPanel {
-//    private ImageIcon pic;
-//    public Background(String fileName) {
-//      pic = new ImageIcon(fileName);
-//      setPreferredSize(new Dimension(pic.getIconWidth(), pic.getIconHeight()));
-//      setLayout(null);
-//    }
-//    // placement and the size of it
-//    @Override
-//    protected void paintComponent(Graphics g) {
-//      super.paintComponent(g);
-//      g.drawImage(pic.getImage(), 0, 0, pic.getIconWidth(), pic.getIconHeight(), this);
-//    }
-//  }
   
   // add new place to the Maps 
   public void addingToMap(Place place) {
@@ -365,22 +346,6 @@ public class AssignMap extends JFrame {
         
       //now check for marked positions and if they overlap with the new position
       
-                        
-    /*   boolean run = true;
-    thisLoop: for (Place name: positionMap.values()){
-        if(name.getMarked()) {
-          Position value = name.getPos();
-          int newX = mev.getX();
-          int newY = mev.getY();
-          int oldX = value.getX();
-          int oldY = value.getY();
-          if (oldX-10 < newX && newX < oldX+10 || oldY-10 < newY && newY < oldY+10) {
-            run = false;
-            break thisLoop;
-          }
-        }
-      }*/
-      
       if(!controlit){
         Position newPos = new Position(mev.getX() , mev.getY() );
 
@@ -431,13 +396,6 @@ public class AssignMap extends JFrame {
         }
         // shows if there's already a place n that position
       }
-      
-      //unlock all Places
-    //  for (Position name: positionMap.keySet()){
-   //     Place value = positionMap.get(name);
-    //    value.setLocked(false);
-     // }
-      
       map.removeMouseListener(this);
       map.setCursor(Cursor.getDefaultCursor());
     }
@@ -538,7 +496,8 @@ public class AssignMap extends JFrame {
                 for (Place p : temp){
                     p.setVisible(true);
                     p.setBorder(new LineBorder(Color.RED));
-                    placeMarkedList.add(p);                }
+                    placeMarkedList.add(p);
+                }
             }
         }
         else{
@@ -546,26 +505,6 @@ public class AssignMap extends JFrame {
         }
     }
   }
-//      if (!searchLabel.getText().equals("")) {
-//        
-//        String name = searchLabel.getText();
-//        Iterator<Place> itr = placeMarkedList.iterator();
-//        while (itr.hasNext()) {
-//          Place p = (Place) itr.next();
-//          p.setBorder(null);
-//        }
-//        placeMarkedList.clear();
-//        if (namedMap.get(name) != null) {
-//          for (Place p : namedMap.get(name)) {
-//            
-//            p.setVisible(true);
-//            p.setBorder(new LineBorder(Color.RED));
-//            placeMarkedList.add(p);
-//          }
-//        }
-//      }
-//    }
-//  }
   
   //remove the marked place.
   class RemoveListener implements ActionListener {
@@ -616,29 +555,6 @@ public class AssignMap extends JFrame {
         repaint();
     }
   }
-//      Iterator<Place> itr = placeMarkedList.iterator();
-//      
-//      while (itr.hasNext()) {
-//        Place next = (Place) itr.next();
-//        positionMap.remove(next.getPos());
-//        namedMap.get(next.getName()).remove(next);
-//        
-//        if (namedMap.get(next.getName()).isEmpty()) {
-//          namedMap.remove(next.getName());
-//        }
-//        categoryMap.get(next.getCategory()).remove(next);
-//        
-//        if (categoryMap.get(next.getCategory()).isEmpty()) {
-//          categoryMap.remove(next.getCategory());
-//        }
-//        map.remove(next);
-//        itr.remove();
-//      }
-//      change = true;
-//      repaint();
-//      placeMarkedList.clear();
-//    }
-//  }
   
   // Hide the categorys on the map
   class HideCategoryListener implements ActionListener {
@@ -674,9 +590,38 @@ public class AssignMap extends JFrame {
       repaint();
     }
   }
-
+      class SavePlaces implements ActionListener{
+          @Override
+          public  void actionPerformed(ActionEvent ave){
+              JFileChooser picAlbum = new JFileChooser();
+              int state = picAlbum.showSaveDialog(getParent());
+              if(state == JFileChooser.APPROVE_OPTION){
+                  File fileToSave = picAlbum.getSelectedFile();
+                  try {
+                      File file = new File(fileToSave.getAbsolutePath());
+                      PrintStream fileStream = new PrintStream(file);
+                      for (Map.Entry<String, ArrayList<Place>> entry : categoryMap.entrySet()) {
+                          ArrayList<Place> temp = entry.getValue();
+                          for(int i = 0; i<temp.size(); i++){
+                              String outData = temp.get(i).toString();
+                              
+                              fileStream.println(outData);
+                              
+                          }
+                      }
+                      
+                      change = true;
+                      fileStream.flush();
+                      fileStream.close();
+                  } catch (IOException e) {
+                      e.printStackTrace();
+                  }
+                  
+              }
+          }
+      }
   // save places to the file.
-  class SavePlaces implements ActionListener {
+  /*class SavePlaces implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent ave) {
       try {
@@ -707,7 +652,7 @@ public class AssignMap extends JFrame {
         JOptionPane.showMessageDialog(null, "Error: " + e.getMessage());
       }
     }
-  }
+  }*/
   //Exit dialog
     class CloseListener extends WindowAdapter {
         @Override
@@ -726,23 +671,6 @@ public class AssignMap extends JFrame {
             }
         }
     }
-//    class CloseListener extends WindowAdapter {
-//        @Override
-//        public void windowClosing(WindowEvent e) {
-//            if (change) {
-//                int confirm = JOptionPane.showConfirmDialog(window, "You have unsaved changes, do you want to quit anaway?",
-//                                                                    "Unsaved Data", JOptionPane.YES_NO_OPTION);
-//                if (confirm == JOptionPane.NO_OPTION || confirm == JOptionPane.CLOSED_OPTION) {
-//                    setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-//                }
-//                else if(confirm == JOptionPane.YES_OPTION){
-//                    System.exit(0);
-//                }
-//            }else {
-//                System.exit(0);
-//            }
-//      }
-//  }
   
   class ExitListener implements ActionListener {
     
