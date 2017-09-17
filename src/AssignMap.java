@@ -342,16 +342,14 @@ public class AssignMap extends JFrame {
     @Override
     public void mouseClicked(MouseEvent mev) {
       Place place = null;
-        int xKordinat = mev.getX();
-        int yKordinat = mev.getY();
-        Position pos = new Position (xKordinat, yKordinat);
+        int xcoor = mev.getX();
+        int ycoor = mev.getY();
+        Position pos = new Position (xcoor, ycoor);
         
-        
-         //  int reply = JOptionPane.showConfirmDialog(null, "There is already a place at these coordinates.", "Information", JOptionPane.INFORMATION_MESSAGE);
         
         if(!controlit){
-            for(int z=yKordinat-10; z<yKordinat+10; z++){
-                for(int i = xKordinat-10; i<xKordinat+10; i++){
+            for(int z=ycoor-10; z<ycoor+10; z++){
+                for(int i = xcoor-10; i<xcoor+10; i++){
                     Position po = new Position(i,z);
                     if(positionMap.containsKey(po)){
                         Place p = positionMap.get(po);
@@ -656,6 +654,8 @@ public class AssignMap extends JFrame {
       placeMarkedList.clear();
       map.validate();
       map.repaint();
+      theJList.clearSelection();
+
     }
   }
   //hide the place on the map
