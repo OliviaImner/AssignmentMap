@@ -593,12 +593,14 @@ import java.io.*;
       class SavePlaces implements ActionListener{
           @Override
           public  void actionPerformed(ActionEvent ave){
+              
               JFileChooser picAlbum = new JFileChooser();
               int state = picAlbum.showSaveDialog(getParent());
               if(state == JFileChooser.APPROVE_OPTION){
-                  File fileToSave = picAlbum.getSelectedFile();
+                  File fileSave = picAlbum.getSelectedFile();
+                  
                   try {
-                      File file = new File(fileToSave.getAbsolutePath());
+                      File file = new File(fileSave.getAbsolutePath());
                       PrintStream fileStream = new PrintStream(file);
                       for (Map.Entry<String, ArrayList<Place>> entry : categoryMap.entrySet()) {
                           ArrayList<Place> temp = entry.getValue();
@@ -606,7 +608,6 @@ import java.io.*;
                               String outData = temp.get(i).toString();
                               
                               fileStream.println(outData);
-                              
                           }
                       }
                       
